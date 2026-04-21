@@ -1,0 +1,33 @@
+<section class="screen">
+  <div class="row space" style="margin-bottom:12px">
+    <h2 id="vid-identity"></h2>
+    <div>
+      <button id="btn-end-call">End Call 📞❌</button>
+      <button id="btn-save-cont" class="primary">Save & Continue →</button>
+    </div>
+  </div>
+  <div class="split-50">
+    <div class="video-stage">
+      <img src="assets/video-placeholder.svg" alt="patient feed" style="width:80%;max-height:80%" />
+      <div class="self">Dr · self-view</div>
+      <div class="live">LIVE ●</div>
+    </div>
+    <div style="overflow-y:auto">
+      <div class="card" id="vid-redband" style="display:none;border-color:var(--flag);border-left-width:4px">
+        <strong style="color:var(--flag)">🔴 RED FLAG ACKNOWLEDGED</strong>
+        <div id="vid-flags"></div>
+      </div>
+      <div class="card"><h3>Vitals</h3><div id="vid-vitals"></div></div>
+      <div class="card"><h3>Abnormal Labs</h3><div id="vid-labs"></div></div>
+      <div class="card"><h3>Meds · Allergy</h3><div id="vid-meds"></div></div>
+      <div class="card">
+        <h3>🎙 Voice Transcript (live, AI)</h3>
+        <div class="transcript" id="vid-transcript"></div>
+        <div class="row" style="margin-top:8px">
+          <button>● REC</button><button>⏸ Pause</button><button>Edit</button>
+        </div>
+      </div>
+      <details class="card"><summary>Full History · Docs · Analytics (optional)</summary><p>Mock optional blocks.</p></details>
+    </div>
+  </div>
+</section>

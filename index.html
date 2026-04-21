@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Telemed Wireframe</title>
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <button id="hamburger" aria-label="Menu" style="display:none">☰</button>
+      <strong style="font-size:16px">TELEMED</strong>
+      <span id="flag-count" class="chip flag" style="display:none"></span>
+      <div style="flex:1"></div>
+      <span class="chip">👤 Dr. X</span>
+      <label>Role:
+        <select id="role-toggle">
+          <option value="doctor">Doctor</option>
+          <option value="nurse">Nurse</option>
+        </select>
+      </label>
+    </header>
+    <aside id="sidebar">
+      <a class="nav-item" data-screen="queue">📋 1 · Queue</a>
+      <a class="nav-item" data-screen="summary">💓 2 · Summary</a>
+      <a class="nav-item" data-screen="video">🎥 3 · Video</a>
+      <a class="nav-item" data-screen="assessment">📝 4 · Assess</a>
+      <a class="nav-item" data-screen="sync">✅ 5 · Sync</a>
+      <hr style="margin:16px 0;border:none;border-top:1px solid var(--border)" />
+      <label style="font-size:12px;color:var(--text-2)">Scenario
+        <select id="scenario-toggle" style="width:100%;margin-top:4px">
+          <option value="A">A · Stable (Somchai)</option>
+          <option value="B">B · Red-flag (Malee)</option>
+          <option value="C">C · Sync fail (Anan)</option>
+        </select>
+      </label>
+    </aside>
+    <main id="main"></main>
+  </div>
+  <script type="module" src="js/nav.js"></script>
+</body>
+</html>
