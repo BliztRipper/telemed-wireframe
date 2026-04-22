@@ -1,5 +1,5 @@
 import { state, setScenario, setScreen, setRole, activeScenario } from './state.js';
-import { renderScreen } from './render.js';
+import { renderScreen, renderIdentityChip } from './render.js';
 import { mount } from './dom.js';
 
 const SCREENS = ['queue', 'summary', 'video', 'assessment', 'sync'];
@@ -43,12 +43,14 @@ function wireUp() {
   roleSel.value = state.role;
   roleSel.addEventListener('change', e => {
     setRole(e.target.value);
+    renderIdentityChip(state.role);
     refreshNav();
     if (state.role === 'nurse' && NURSE_DISABLED.has(state.screen)) loadFragment('queue');
     else renderScreen(state.screen);
   });
   const hamb = document.getElementById('hamburger');
   hamb.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
+  renderIdentityChip(state.role);
   loadFragment(state.screen || 'queue');
 }
 

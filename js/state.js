@@ -1,6 +1,6 @@
 import { scenarios } from './scenarios.js';
 
-const KEY = 'telemed.state.v2';
+const KEY = 'telemed.state.v3';
 const defaults = {
   scenarioId: 'A',
   screen: 'queue',
@@ -10,7 +10,10 @@ const defaults = {
   showDone: false,
   notes: {},
   noteSavedAt: {},
-  doneIds: ['D', 'E']
+  doneIds: ['D', 'E'],
+  lastSyncOutcome: null,
+  rxEditMode: {},
+  rxEdits: {}
 };
 
 function load() {
@@ -23,6 +26,8 @@ export function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
 export function setScenario(id) {
   state.scenarioId = id;
   state.redFlagAcknowledged = false;
+  state.rxEditMode = {};
+  state.rxEdits = {};
   save();
 }
 export function setScreen(screen) { state.screen = screen; save(); }
@@ -42,3 +47,23 @@ export function markDone(id) {
 export function isDone(id) { return state.doneIds.includes(id); }
 export function setQueueFilter(f) { state.queueFilter = f; save(); }
 export function setShowDone(v) { state.showDone = !!v; save(); }
+
+export function setLastSyncOutcome(outcome) { state.lastSyncOutcome = outcome; save(); }
+export function clearLastSyncOutcome() { state.lastSyncOutcome = null; save(); }
+export function setRxEditMode(hn, on) {
+  state.rxEditMode = { ...state.rxEditMode, [hn]: !!on };
+  save();
+}
+export function setRxEdits(hn, rows) {
+  state.rxEdits = { ...state.rxEdits, [hn]: rows };
+  save();
+}
+export function clearRxEdits(hn) {
+  const next = { ...state.rxEdits }; delete next[hn];
+  state.rxEdits = next; save();
+}
+export function getRxRows(hn) {
+  if (state.rxEdits[hn]) return state.rxEdits[hn];
+  const s = activeScenario();
+  return s.rxPrefilled || [];
+}

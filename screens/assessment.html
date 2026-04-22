@@ -16,9 +16,16 @@
     <div style="margin-top:8px"><button id="btn-regen">Regenerate</button> <button id="btn-accept">Accept</button></div>
   </div>
   <div class="card">
-    <h3>Prescription</h3>
+    <div class="row space">
+      <h3>Prescription</h3>
+      <div class="rx-actions">
+        <button id="btn-rx-edit">Edit ✎</button>
+        <button id="btn-rx-save" class="primary" style="display:none">Save ✓</button>
+        <button id="btn-rx-cancel" style="display:none">Cancel</button>
+      </div>
+    </div>
     <div id="as-rx"></div>
-    <button id="btn-add-drug" style="margin-top:8px">+ Add Drug</button>
+    <button id="btn-add-drug" style="margin-top:8px;display:none">+ Add Drug</button>
     <div style="margin-top:12px">Dispense to: <select id="as-dispense"><option>Hospital Pharmacy</option><option>External Pharmacy</option><option>Patient self-pickup</option></select></div>
   </div>
   <div class="card">

@@ -1,8 +1,14 @@
 <section class="screen">
-  <h2 style="margin-bottom:12px">Record & Sync · <span id="sync-name"></span></h2>
-  <div class="big-status" id="sync-status">Syncing…</div>
+  <div class="row space">
+    <h2>Record & Sync · <span id="sync-name"></span></h2>
+    <span id="sync-count-pill" class="count-pill">0 / 0 synced</span>
+  </div>
+  <div id="sync-bigbar" class="status-bar syncing">⏳ Syncing…</div>
   <div style="color:var(--text-2);margin-bottom:12px" id="sync-ts"></div>
   <div id="sync-list"></div>
+  <div class="row space" style="margin-top:12px">
+    <button id="btn-retry-all" style="display:none">🔁 Retry All Failed</button>
+    <button id="btn-back" class="primary">Back to Queue →</button>
+  </div>
   <details class="card" style="margin-top:16px"><summary>Full Audit Trail (optional)</summary><pre style="white-space:pre-wrap">mock audit entries…</pre></details>
-  <div style="text-align:right;margin-top:16px"><button id="btn-back" class="primary">Back to Queue →</button></div>
 </section>

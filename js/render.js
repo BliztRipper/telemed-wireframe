@@ -1,5 +1,5 @@
-import { scenarios } from './scenarios.js';
-import { state, activeScenario, setScenario, setQueueFilter, setShowDone, isDone, markDone, getNote, setNote, getNoteSavedAt } from './state.js';
+import { scenarios, identity } from './scenarios.js';
+import { state, activeScenario, setScenario, setQueueFilter, setShowDone, isDone, markDone, getNote, setNote, getNoteSavedAt, setLastSyncOutcome, clearLastSyncOutcome, setRxEditMode, setRxEdits, clearRxEdits, getRxRows } from './state.js';
 import { mount } from './dom.js';
 import { showRedFlagToast, sparkline, playTranscript, stopTranscript } from './interactions.js';
 
@@ -15,6 +15,74 @@ function formatSavedAgo(iso) {
 export function renderScreen(name) {
   const fns = { queue: renderQueue, summary: renderSummary, video: renderVideo, assessment: renderAssessment, sync: renderSync };
   (fns[name] || (() => {}))();
+}
+
+export function renderIdentityChip(role) {
+  const who = identity[role];
+  const chip = document.getElementById('identity-chip');
+  if (!chip || !who) return;
+  const nameEl = chip.querySelector('.identity-name');
+  const idEl   = chip.querySelector('.identity-id');
+  nameEl.textContent = `👤 ${who.name}`;
+  idEl.textContent   = `ID ${who.id}`;
+}
+
+function absTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${hh}:${mm}`;
+}
+function relTime(iso) {
+  if (!iso) return '';
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.round(diff / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.round(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.round(h / 24)}d ago`;
+}
+function tsPair(iso) { return iso ? `${absTime(iso)} · ${relTime(iso)}` : ''; }
+function buildIso(hhmm) {
+  if (!hhmm) return null;
+  const [h, m] = hhmm.split(':').map(Number);
+  const d = new Date(); d.setHours(h, m, 0, 0);
+  return d.toISOString();
+}
+
+export function showSyncToast(outcome) {
+  const mount = document.getElementById('sum-toast-mount');
+  if (!mount || !outcome) return;
+  const tone = outcome.result;
+  const titles = { ok: 'Synced', partial: 'Partial Sync', fail: 'Sync Failed' };
+  const icons  = { ok: '✅',    partial: '⚠️',           fail: '❌' };
+  const systems = outcome.details
+    .filter(d => d.outcome && d.outcome !== 'fail')
+    .map(d => d.key.toUpperCase()).join(' · ');
+  const at = absTime(outcome.at);
+
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${tone}`;
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+
+  const row = document.createElement('div'); row.className = 'toast-row';
+  const iconEl = document.createElement('span'); iconEl.className = 'toast-icon'; iconEl.textContent = icons[tone] || '';
+  const titleEl = document.createElement('strong'); titleEl.textContent = titles[tone] || 'Sync';
+  const close = document.createElement('button'); close.className = 'toast-close'; close.setAttribute('aria-label', 'Dismiss'); close.textContent = '×';
+  row.append(iconEl, titleEl, close);
+
+  const body = document.createElement('div'); body.className = 'toast-body';
+  body.textContent = [systems, at].filter(Boolean).join(' · ');
+
+  toast.append(row, body);
+  mount.replaceChildren(toast);
+
+  const dismiss = () => toast.remove();
+  close.addEventListener('click', dismiss);
+  setTimeout(() => { if (mount.contains(toast)) dismiss(); }, 5000);
 }
 
 function deriveStatus(s) {
@@ -165,15 +233,30 @@ function renderSummary() {
     ['SpO2', v.spo2 + '%', v.spo2 < 92],
     ['Temp', v.temp, v.temp > 38.5 || v.temp < 35.5]
   ].map(([k, val, bad]) => `<span class="chip ${bad ? 'flag' : ''}">${k} ${val}${bad ? ' 🔴' : ''}</span>`).join(' ');
-  mount(document.getElementById('sum-vitals'), vitalHtml + `<div style="color:var(--text-2);margin-top:4px">Taken ${v.takenAt}</div>`);
+  // vitals header timestamp (absolute + relative)
+  const vitalsTsEl = document.getElementById('sum-vitals-ts');
+  if (vitalsTsEl) vitalsTsEl.textContent = tsPair(buildIso(v.takenAt));
+  mount(document.getElementById('sum-vitals'), vitalHtml);
 
+  // labs: shared header when all receivedAt equal, per-row otherwise
   const abnormal = s.labs.filter(l => l.abnormal);
+  const labsTsEl = document.getElementById('sum-labs-ts');
+  const allSame = abnormal.length > 0 && abnormal.every(l => l.receivedAt === abnormal[0].receivedAt);
+  if (labsTsEl) labsTsEl.textContent = allSame ? tsPair(abnormal[0].receivedAt) : '';
   mount(document.getElementById('sum-labs'), abnormal.length
-    ? abnormal.map(l => `<div>${l.name}: ${l.values.join(' → ')} ${l.unit} ${l.arrow} <span class="sparkline">${sparkline(l.values)}</span></div>`).join('')
+    ? abnormal.map(l => {
+        const perRow = allSame ? '' : ` <span class="ts-pair">${tsPair(l.receivedAt)}</span>`;
+        return `<div>${l.name}: ${l.values.join(' → ')} ${l.unit} ${l.arrow} <span class="sparkline">${sparkline(l.values)}</span>${perRow}</div>`;
+      }).join('')
     : '<span style="color:var(--text-2)">No abnormal trends.</span>');
 
   mount(document.getElementById('sum-meds'), s.meds.map(m => `<li>${m.name} ${m.dose} ${m.freq}</li>`).join(''));
-  mount(document.getElementById('sum-ai'), `🤖 Risk score <strong>${s.aiRisk.score}</strong> (${s.aiRisk.label})<br /><span style="color:var(--text-2)">${s.aiRisk.recommendation}</span>`);
+
+  // consume one-shot sync outcome toast
+  if (state.lastSyncOutcome && state.lastSyncOutcome.scenarioId === state.scenarioId) {
+    showSyncToast(state.lastSyncOutcome);
+    clearLastSyncOutcome();
+  }
 
   if (s.redFlags.length) showRedFlagToast(s.redFlags);
 
@@ -287,25 +370,74 @@ function renderAssessment() {
     <div><strong>P:</strong> <textarea style="width:100%">${d.p}</textarea></div>
   `);
 
-  const rxMount = document.getElementById('as-rx');
-  mount(rxMount, s.rxPrefilled.map((r, i) => `
-    <div class="card" style="margin-bottom:8px">
-      <div class="row">
-        <span>Drug: <strong>${r.drug}</strong></span>
-        <span>Dose: ${r.dose}</span>
-        <span>Freq: ${r.freq}</span>
-        <span>Dur: ${r.duration}</span>
-        <button data-rm="${i}">Remove</button>
-      </div>
-      <div style="margin-top:4px">
-        🤖 Interaction: <span class="chip ${r.interaction==='safe'?'ok':(r.interaction==='caution'?'warn':'flag')}">${r.interaction}${r.interactionNote ? ' — '+r.interactionNote : ''}</span>
-        Allergy: <span class="chip ${r.allergyCheck==='safe'?'ok':'flag'}">${r.allergyCheck}</span>
-      </div>
-    </div>
-  `).join(''));
+  const hn = s.patient.hn;
+  const editing = !!state.rxEditMode[hn];
+  const rxRows = getRxRows(hn);
 
-  rxMount.querySelectorAll('[data-rm]').forEach(b =>
-    b.addEventListener('click', () => b.closest('.card').remove()));
+  const btnEdit   = document.getElementById('btn-rx-edit');
+  const btnSave   = document.getElementById('btn-rx-save');
+  const btnCancel = document.getElementById('btn-rx-cancel');
+  const btnAdd    = document.getElementById('btn-add-drug');
+
+  btnEdit.style.display   = editing ? 'none' : '';
+  btnSave.style.display   = editing ? '' : 'none';
+  btnCancel.style.display = editing ? '' : 'none';
+  btnAdd.style.display    = editing ? '' : 'none';
+
+  const rxHost = document.getElementById('as-rx');
+  if (editing) {
+    mount(rxHost, rxRows.map((r, i) => `
+      <div class="rx-row" data-idx="${i}">
+        <input data-k="drug"     value="${r.drug || ''}"     placeholder="Drug" />
+        <input data-k="dose"     value="${r.dose || ''}"     placeholder="Dose" />
+        <input data-k="freq"     value="${r.freq || ''}"     placeholder="Freq" />
+        <input data-k="duration" value="${r.duration || ''}" placeholder="Duration" />
+        <button class="rx-del" aria-label="Remove">✕</button>
+      </div>
+    `).join(''));
+  } else {
+    mount(rxHost, rxRows.length ? rxRows.map(r => {
+      const tags = [];
+      if (r.interaction === 'caution') tags.push('<span class="chip flag">⚠️ interaction</span>');
+      else if (r.interaction) tags.push('<span class="chip">✓ safe</span>');
+      if (r.allergyCheck === 'safe') tags.push('<span class="chip">✓ allergy-clear</span>');
+      return `<div>${r.drug} ${r.dose || ''} · ${r.freq || ''} · ${r.duration || ''} ${tags.join(' ')}</div>`;
+    }).join('') : '<span style="color:var(--text-2)">No prescriptions.</span>');
+  }
+
+  btnEdit.onclick = () => {
+    setRxEdits(hn, JSON.parse(JSON.stringify(s.rxPrefilled || [])));
+    setRxEditMode(hn, true);
+    renderAssessment();
+  };
+  btnCancel.onclick = () => {
+    clearRxEdits(hn);
+    setRxEditMode(hn, false);
+    renderAssessment();
+  };
+  btnSave.onclick = () => {
+    const rows = [...rxHost.querySelectorAll('.rx-row')].map(row => {
+      const out = {};
+      row.querySelectorAll('input').forEach(inp => { out[inp.dataset.k] = inp.value.trim(); });
+      return out;
+    }).filter(r => r.drug);
+    setRxEdits(hn, rows);
+    setRxEditMode(hn, false);
+    renderAssessment();
+  };
+  btnAdd.onclick = () => {
+    const rows = [...(state.rxEdits[hn] || []), { drug: '', dose: '', freq: '', duration: '' }];
+    setRxEdits(hn, rows);
+    renderAssessment();
+  };
+  rxHost.querySelectorAll('.rx-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.closest('.rx-row').dataset.idx);
+      const rows = (state.rxEdits[hn] || []).filter((_, i) => i !== idx);
+      setRxEdits(hn, rows);
+      renderAssessment();
+    });
+  });
 
   const erBox = document.getElementById('as-er');
   erBox.checked = s.referral.er;
@@ -314,24 +446,6 @@ function renderAssessment() {
     document.getElementById('as-er-banner').style.display = erBox.checked ? 'block' : 'none';
   });
   document.getElementById('as-dept').value = s.referral.dept || 'None';
-
-  document.getElementById('btn-add-drug').addEventListener('click', () => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.style.marginBottom = '8px';
-    mount(card, `
-      <div class="row">
-        <input placeholder="Drug" />
-        <input placeholder="Dose" style="width:80px"/>
-        <input placeholder="Freq" style="width:80px"/>
-        <input placeholder="Duration" style="width:100px"/>
-        <button class="rm-new">Remove</button>
-      </div>
-      <div style="margin-top:4px;color:var(--text-2)">🤖 checks run on save</div>
-    `);
-    card.querySelector('.rm-new').addEventListener('click', () => card.remove());
-    rxMount.appendChild(card);
-  });
 
   document.getElementById('btn-regen').addEventListener('click', () => alert('[demo] AI regenerating draft...'));
   document.getElementById('btn-accept').addEventListener('click', () => alert('[demo] SOAP accepted'));
@@ -358,7 +472,7 @@ function renderSync() {
     { key: 'lab', label: 'Lab Order System' },
     { key: 'nhso', label: 'NHSO (30-baht)' }
   ];
-  if (s.syncOutcome.er) dests.push({ key: 'er', label: 'ER System' });
+  if (normalize(s.syncOutcome.er).result) dests.push({ key: 'er', label: 'ER System' });
 
   const list = document.getElementById('sync-list');
   mount(list, dests.map(d => `
@@ -368,6 +482,8 @@ function renderSync() {
     </div>
   `).join(''));
 
+  updatePill(dests);
+
   let idx = 0;
   function step() {
     if (idx >= dests.length) return finalize();
@@ -375,17 +491,24 @@ function renderSync() {
     const row = document.getElementById(`sync-${d.key}`);
     setTimeout(() => {
       if (!row || !document.body.contains(row)) return;
-      const outcome = s.syncOutcome[d.key];
-      if (outcome === 'ok') {
-        row.classList.add('ok');
-        mount(row, `<span>✅ ${d.label}</span><span>synced ${new Date().toTimeString().slice(0,8)}</span>`);
-      } else if (outcome === 'fail') {
-        row.classList.add('fail');
-        mount(row, `<span>❌ ${d.label}</span><span>FAILED — offline <button class="retry">Retry</button></span>`);
-        row.querySelector('.retry').addEventListener('click', () => retry(d));
-      }
+      const n = normalize(s.syncOutcome[d.key]);
+      paintRow(row, d, n);
+      updatePill(dests);
       idx++; step();
     }, 450);
+  }
+
+  function paintRow(row, d, n) {
+    row.classList.remove('ok', 'fail');
+    if (n.result === 'ok') {
+      row.classList.add('ok');
+      mount(row, `<span>✅ ${d.label}</span><span>synced ${new Date().toTimeString().slice(0,8)}</span>`);
+    } else if (n.result === 'fail') {
+      row.classList.add('fail');
+      const meta = [n.code, n.reason].filter(Boolean).join(' · ') || 'FAILED';
+      mount(row, `<span>❌ ${d.label}</span><span>${meta} <button class="retry">Retry</button></span>`);
+      row.querySelector('.retry').addEventListener('click', () => retry(d));
+    }
   }
 
   function retry(d) {
@@ -394,26 +517,64 @@ function renderSync() {
     mount(row, `<span>⏳ ${d.label}</span><span>retrying…</span>`);
     setTimeout(() => {
       if (!document.body.contains(row)) return;
-      row.classList.remove('fail');
-      row.classList.add('ok');
+      row.classList.remove('fail'); row.classList.add('ok');
       mount(row, `<span>✅ ${d.label}</span><span>synced ${new Date().toTimeString().slice(0,8)}</span>`);
       s.syncOutcome[d.key] = 'ok';
+      updatePill(dests);
       finalize();
     }, 1000);
   }
 
   function finalize() {
-    const anyFail = dests.some(d => s.syncOutcome[d.key] === 'fail');
-    const hdr = document.getElementById('sync-status');
-    if (!hdr) return;
-    if (anyFail) {
-      hdr.classList.remove('ok'); hdr.classList.add('warn');
-      hdr.textContent = '⚠️ Partial Sync Failure';
+    const results = dests.map(d => ({ key: d.key, outcome: normalize(s.syncOutcome[d.key]).result }));
+    const fails = results.filter(r => r.outcome === 'fail').length;
+    const bar = document.getElementById('sync-bigbar');
+    const retryAll = document.getElementById('btn-retry-all');
+    bar.classList.remove('syncing', 'ok', 'partial', 'fail');
+    if (fails === 0) {
+      bar.classList.add('ok'); bar.textContent = '✅ Sync Complete';
+      retryAll.style.display = 'none';
+    } else if (fails < dests.length) {
+      bar.classList.add('partial'); bar.textContent = `⚠️ Partial Sync Failure · ${fails} of ${dests.length} failed`;
+      retryAll.style.display = '';
     } else {
-      hdr.classList.remove('warn'); hdr.classList.add('ok');
-      hdr.textContent = '✅ Sync Complete';
+      bar.classList.add('fail'); bar.textContent = '❌ All Systems Failed';
+      retryAll.style.display = '';
     }
+    const result = fails === 0 ? 'ok' : (fails < dests.length ? 'partial' : 'fail');
+    setLastSyncOutcome({ scenarioId: s.id, result, at: new Date().toISOString(), details: results });
   }
+
+  function updatePill(ds) {
+    const okCount = ds.filter(d => normalize(s.syncOutcome[d.key]).result === 'ok').length;
+    const pill = document.getElementById('sync-count-pill');
+    pill.textContent = `${okCount} / ${ds.length} synced`;
+    pill.classList.remove('pill-ok', 'pill-partial');
+    if (okCount === ds.length) pill.classList.add('pill-ok');
+    else if (okCount > 0) pill.classList.add('pill-partial');
+  }
+
+  function normalize(v) {
+    if (!v) return { result: null };
+    if (typeof v === 'string') return { result: v };
+    return { result: v.result, code: v.code, reason: v.reason };
+  }
+
+  document.getElementById('btn-retry-all').onclick = () => {
+    const pending = dests.filter(d => normalize(s.syncOutcome[d.key]).result === 'fail');
+    document.getElementById('btn-retry-all').disabled = true;
+    let i = 0;
+    function next() {
+      if (i >= pending.length) {
+        document.getElementById('btn-retry-all').disabled = false;
+        return finalize();
+      }
+      retry(pending[i++]);
+      setTimeout(next, 1100);
+    }
+    next();
+  };
+
   step();
 
   document.getElementById('btn-back').addEventListener('click', () => {

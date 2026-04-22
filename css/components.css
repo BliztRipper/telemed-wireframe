@@ -52,3 +52,39 @@
 .note-card .note-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
 .note-ref-card { border-left: 3px solid var(--text); }
 .note-ref-card pre { font: inherit; white-space: pre-wrap; margin-top: 6px; color: var(--text-2); }
+
+/* === feedback v2 === */
+.identity-chip { display: inline-flex; gap: 6px; align-items: baseline; user-select: none; cursor: default; }
+.identity-chip .identity-id { font-size: 11px; color: var(--text-2); }
+
+.ts-pair { font-size: 12px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+
+#sum-toast-mount { position: sticky; top: 12px; z-index: 10; display: flex; justify-content: flex-end; pointer-events: none; }
+#sum-toast-mount .toast { pointer-events: auto; }
+
+.toast { border: 1px solid var(--border); border-left-width: 4px; border-radius: var(--radius);
+  padding: 10px 12px; background: var(--surface); width: 320px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08); margin-bottom: 8px; }
+.toast-ok      { border-left-color: var(--ok); }
+.toast-partial { border-left-color: var(--warn); }
+.toast-fail    { border-left-color: var(--flag); }
+.toast-row { display: flex; align-items: center; gap: 8px; }
+.toast-close { margin-left: auto; background: transparent; border: 0; font-size: 16px; cursor: pointer; }
+.toast-body { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+
+.status-bar { padding: 10px 12px; border-radius: var(--radius); font-weight: 600; margin-bottom: 8px; }
+.status-bar.syncing { background: #FFF4E5; color: var(--warn); }
+.status-bar.ok      { background: #E8F7EE; color: var(--ok); }
+.status-bar.partial { background: #FFF4E5; color: var(--warn); }
+.status-bar.fail    { background: #FFEBEE; color: var(--flag); }
+
+.count-pill { border-radius: 999px; padding: 2px 10px; font-size: 12px;
+  background: #EEF1F4; color: var(--text-2); }
+.count-pill.pill-ok      { background: #E8F7EE; color: var(--ok); }
+.count-pill.pill-partial { background: #FFF4E5; color: var(--warn); }
+
+.rx-row { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; }
+.rx-row input { flex: 1 1 auto; padding: 4px 6px; }
+.rx-row .rx-del { background: transparent; border: 0; color: var(--flag); cursor: pointer; }
+.rx-actions { display: flex; gap: 6px; }

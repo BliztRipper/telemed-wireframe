@@ -1,3 +1,8 @@
+export const identity = {
+  doctor: { name: 'Dr. Somchai N.', id: 'D-00123' },
+  nurse:  { name: 'Nurse Malee K.', id: 'N-00456' }
+};
+
 export const scenarios = {
   A: {
     id: 'A',
@@ -8,8 +13,8 @@ export const scenarios = {
     allergy: [],
     vitals: { bp: '128/80', hr: 76, rr: 16, spo2: 98, temp: 36.8, takenAt: '10:25' },
     labs: [
-      { name: 'HbA1c', unit: '%', values: [7.2, 7.0, 6.8], abnormal: false, arrow: '↓' },
-      { name: 'FBS',   unit: 'mg/dL', values: [142, 138, 130], abnormal: false, arrow: '↓' }
+      { name: 'HbA1c', unit: '%', values: [7.2, 7.0, 6.8], abnormal: false, arrow: '↓', receivedAt: '2026-04-22T07:30:00+07:00' },
+      { name: 'FBS',   unit: 'mg/dL', values: [142, 138, 130], abnormal: false, arrow: '↓', receivedAt: '2026-04-22T07:30:00+07:00' }
     ],
     meds: [
       { name: 'Metformin', dose: '500mg', freq: 'BID' },
@@ -48,9 +53,9 @@ export const scenarios = {
     ],
     vitals: { bp: '156/94', hr: 128, rr: 22, spo2: 89, temp: 37.1, takenAt: '09:42' },
     labs: [
-      { name: 'Troponin I', unit: 'ng/mL', values: [0.02, 0.15, 0.8], abnormal: true, arrow: '↑' },
-      { name: 'BNP',        unit: 'pg/mL', values: [120, 340, 890], abnormal: true, arrow: '↑' },
-      { name: 'Creatinine', unit: 'mg/dL', values: [1.1, 1.2, 1.3], abnormal: false, arrow: '→' }
+      { name: 'Troponin I', unit: 'ng/mL', values: [0.02, 0.15, 0.8], abnormal: true, arrow: '↑', receivedAt: '2026-04-22T09:30:00+07:00' },
+      { name: 'BNP',        unit: 'pg/mL', values: [120, 340, 890], abnormal: true, arrow: '↑', receivedAt: '2026-04-22T09:45:00+07:00' },
+      { name: 'Creatinine', unit: 'mg/dL', values: [1.1, 1.2, 1.3], abnormal: false, arrow: '→', receivedAt: '2026-04-22T08:15:00+07:00' }
     ],
     meds: [
       { name: 'Furosemide', dose: '40mg', freq: 'BID' },
@@ -93,8 +98,8 @@ export const scenarios = {
     allergy: [],
     vitals: { bp: '134/84', hr: 72, rr: 14, spo2: 98, temp: 36.7, takenAt: '10:40' },
     labs: [
-      { name: 'Creatinine', unit: 'mg/dL', values: [1.0, 1.0, 1.0], abnormal: false, arrow: '→' },
-      { name: 'K+',         unit: 'mmol/L', values: [4.2, 4.1, 4.0], abnormal: false, arrow: '→' }
+      { name: 'Creatinine', unit: 'mg/dL', values: [1.0, 1.0, 1.0], abnormal: false, arrow: '→', receivedAt: '2026-04-22T08:00:00+07:00' },
+      { name: 'K+',         unit: 'mmol/L', values: [4.2, 4.1, 4.0], abnormal: false, arrow: '→', receivedAt: '2026-04-22T08:00:00+07:00' }
     ],
     meds: [ { name: 'Amlodipine', dose: '5mg', freq: 'OD' } ],
     redFlags: [],
@@ -116,7 +121,7 @@ export const scenarios = {
     ],
     referral: { er: false, dept: 'None' },
     labPending: true,
-    syncOutcome: { his: 'ok', pharmacy: 'fail', lab: 'ok', nhso: 'ok', er: null }
+    syncOutcome: { his: 'ok', pharmacy: { result: 'fail', code: 'ERR-503', reason: 'pharmacy offline' }, lab: 'ok', nhso: 'ok', er: null }
   },
   D: {
     id: 'D',
@@ -127,7 +132,7 @@ export const scenarios = {
     allergy: [],
     vitals: { bp: '124/78', hr: 72, rr: 15, spo2: 99, temp: 36.6, takenAt: '08:50' },
     labs: [
-      { name: 'Creatinine', unit: 'mg/dL', values: [1.0, 1.0, 1.0], abnormal: false, arrow: '→' }
+      { name: 'Creatinine', unit: 'mg/dL', values: [1.0, 1.0, 1.0], abnormal: false, arrow: '→', receivedAt: '2026-04-22T07:15:00+07:00' }
     ],
     meds: [ { name: 'Losartan', dose: '50mg', freq: 'OD' } ],
     redFlags: [],
