@@ -33,6 +33,7 @@ export const scenarios = {
       { drug: 'Metformin', dose: '500mg', freq: 'BID', duration: '90 days', interaction: 'safe', allergyCheck: 'safe' }
     ],
     referral: { er: false, dept: 'None' },
+    labPending: false,
     syncOutcome: { his: 'ok', pharmacy: 'ok', lab: 'ok', nhso: 'ok', er: null }
   },
   B: {
@@ -80,6 +81,7 @@ export const scenarios = {
       { drug: 'Nitroglycerin SL', dose: '0.4mg', freq: 'PRN', duration: '1 day', interaction: 'caution', interactionNote: 'caution w/ enalapril (monitor BP)', allergyCheck: 'safe' }
     ],
     referral: { er: true, dept: 'Cardiology' },
+    labPending: false,
     syncOutcome: { his: 'ok', pharmacy: 'ok', lab: 'ok', nhso: 'ok', er: 'ok' }
   },
   C: {
@@ -113,6 +115,47 @@ export const scenarios = {
       { drug: 'Amlodipine', dose: '5mg', freq: 'OD', duration: '90 days', interaction: 'safe', allergyCheck: 'safe' }
     ],
     referral: { er: false, dept: 'None' },
+    labPending: true,
     syncOutcome: { his: 'ok', pharmacy: 'fail', lab: 'ok', nhso: 'ok', er: null }
+  },
+  D: {
+    id: 'D',
+    patient: { name: 'Prasit L.', hn: '00234', age: 52, sex: 'M' },
+    queueSeq: 0, waitingMin: 0, scheduledAt: '09:00',
+    chiefComplaint: 'HTN follow-up, completed.',
+    reasonShort: 'HTN follow-up',
+    allergy: [],
+    vitals: { bp: '124/78', hr: 72, rr: 15, spo2: 99, temp: 36.6, takenAt: '08:50' },
+    labs: [
+      { name: 'Creatinine', unit: 'mg/dL', values: [1.0, 1.0, 1.0], abnormal: false, arrow: '→' }
+    ],
+    meds: [ { name: 'Losartan', dose: '50mg', freq: 'OD' } ],
+    redFlags: [],
+    aiRisk: { score: 10, label: 'low', recommendation: 'Continue plan.' },
+    transcript: [],
+    soapDraft: { s: 'Stable HTN.', o: 'BP 124/78.', a: 'HTN controlled.', p: 'Continue Losartan.' },
+    rxPrefilled: [],
+    referral: { er: false, dept: 'None' },
+    labPending: false,
+    syncOutcome: { his: 'ok', pharmacy: 'ok', lab: 'ok', nhso: 'ok', er: null }
+  },
+  E: {
+    id: 'E',
+    patient: { name: 'Nadia M.', hn: '00345', age: 34, sex: 'F' },
+    queueSeq: 0, waitingMin: 0, scheduledAt: '09:30',
+    chiefComplaint: 'Migraine follow-up, completed.',
+    reasonShort: 'Migraine follow-up',
+    allergy: [ { drug: 'Ibuprofen', reaction: 'GI upset' } ],
+    vitals: { bp: '118/74', hr: 68, rr: 14, spo2: 99, temp: 36.5, takenAt: '09:20' },
+    labs: [],
+    meds: [ { name: 'Sumatriptan', dose: '50mg', freq: 'PRN' } ],
+    redFlags: [],
+    aiRisk: { score: 8, label: 'low', recommendation: 'Continue plan.' },
+    transcript: [],
+    soapDraft: { s: 'Migraine stable.', o: 'No aura.', a: 'Chronic migraine.', p: 'Continue PRN sumatriptan.' },
+    rxPrefilled: [],
+    referral: { er: false, dept: 'None' },
+    labPending: false,
+    syncOutcome: { his: 'ok', pharmacy: 'ok', lab: 'ok', nhso: 'ok', er: null }
   }
 };

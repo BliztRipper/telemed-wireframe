@@ -30,3 +30,25 @@
 .big-status { padding: 24px; border-radius: var(--radius); text-align: center; font-size: 20px; margin-bottom: 16px; }
 .big-status.ok   { background: #E8F5E9; color: var(--ok); }
 .big-status.warn { background: #FFF8E1; color: var(--warn); }
+.status-pill { display: inline-block; padding: 2px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; color: var(--text-2); }
+.status-pill.ready { color: var(--ok); border-color: var(--ok); }
+.status-pill.in-consult { background: var(--text); color: var(--bg); border-color: var(--text); }
+.status-pill.in-consult::before { content: "● "; color: var(--flag); }
+.status-pill.done { color: var(--text-2); background: var(--surface); opacity: 0.7; }
+.recommended-next { display: inline-block; padding: 1px 8px; margin-left: 6px; font-size: 11px; border: 1px solid var(--text); border-radius: 999px; color: var(--text); font-weight: 600; }
+.recommended-next::before { content: "★ "; }
+.queue-row.done { opacity: 0.55; }
+.filter-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.filter-chip { padding: 4px 12px; border: 1px solid var(--border); border-radius: 999px; font-size: 13px; background: var(--bg); cursor: pointer; color: var(--text); }
+.filter-chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+.filter-chip .count { opacity: 0.7; margin-left: 4px; font-size: 11px; }
+.show-done-toggle { margin-left: auto; font-size: 13px; color: var(--text-2); display: flex; align-items: center; gap: 4px; cursor: pointer; }
+.crit-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.note-card textarea { width: 100%; min-height: 120px; resize: vertical; font: inherit; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); }
+.note-card .note-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.note-card .note-header h3 { margin: 0; }
+.note-timestamp { font-size: 12px; color: var(--text-2); }
+.note-timestamp.unsaved { color: var(--warn); }
+.note-card .note-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
+.note-ref-card { border-left: 3px solid var(--text); }
+.note-ref-card pre { font: inherit; white-space: pre-wrap; margin-top: 6px; color: var(--text-2); }

@@ -1,11 +1,16 @@
 <section class="screen">
-  <div class="row space" style="margin-bottom:12px">
-    <h2>Patient Queue</h2>
-    <div><button>Filter ▾</button> <button>Search</button></div>
+  <div class="row space" style="margin-bottom:8px">
+    <h2 id="q-title">Queue</h2>
+    <div><button aria-label="Search">🔍</button></div>
+  </div>
+  <div class="filter-row" id="q-filters">
+    <button class="filter-chip active" data-filter="all">All <span class="count"></span></button>
+    <button class="filter-chip" data-filter="waiting">Waiting <span class="count"></span></button>
+    <button class="filter-chip" data-filter="urgent">Urgent <span class="count"></span></button>
+    <button class="filter-chip" data-filter="labPending">Lab pending <span class="count"></span></button>
+    <label class="show-done-toggle">
+      <input type="checkbox" id="q-show-done" /> Show done
+    </label>
   </div>
   <div id="queue-list"></div>
-  <details class="card" style="margin-top:16px">
-    <summary>Demographics · History · Analytics</summary>
-    <p style="color:var(--text-2);margin-top:8px">Today 12 patients, avg wait 8m, 0 no-show.</p>
-  </details>
 </section>

@@ -45,6 +45,7 @@ function wireUp() {
     setRole(e.target.value);
     refreshNav();
     if (state.role === 'nurse' && NURSE_DISABLED.has(state.screen)) loadFragment('queue');
+    else renderScreen(state.screen);
   });
   const hamb = document.getElementById('hamburger');
   hamb.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));

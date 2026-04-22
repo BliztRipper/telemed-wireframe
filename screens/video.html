@@ -27,7 +27,16 @@
           <button>● REC</button><button>⏸ Pause</button><button>Edit</button>
         </div>
       </div>
-      <details class="card"><summary>Full History · Docs · Analytics (optional)</summary><p>Mock optional blocks.</p></details>
+      <div class="card note-card">
+        <div class="note-header">
+          <h3>📝 Consult note</h3>
+          <span class="note-timestamp" id="note-ts">No note yet</span>
+        </div>
+        <textarea id="note-text" placeholder="Type consult note here… (autosaves)"></textarea>
+        <div class="note-actions">
+          <button id="btn-save-note" class="primary">Save draft</button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
