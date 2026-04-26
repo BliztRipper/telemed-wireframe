@@ -1,14 +1,34 @@
 <section class="screen">
-  <div class="row space">
-    <h2>Record & Sync · <span id="sync-name"></span></h2>
+  <div class="page-header">
+    <div>
+      <h1>Record &amp; Sync</h1>
+      <div class="meta">Patient: <span id="sync-name"></span></div>
+    </div>
     <span id="sync-count-pill" class="count-pill">0 / 0 synced</span>
   </div>
-  <div id="sync-bigbar" class="status-bar syncing">⏳ Syncing…</div>
-  <div style="color:var(--text-2);margin-bottom:12px" id="sync-ts"></div>
-  <div id="sync-list"></div>
-  <div class="row space" style="margin-top:12px">
-    <button id="btn-retry-all" style="display:none">🔁 Retry All Failed</button>
-    <button id="btn-back" class="primary">Back to Queue →</button>
+
+  <div id="sync-bigbar" class="status-bar syncing">
+    <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>
+    <span>Syncing…</span>
   </div>
-  <details class="card" style="margin-top:16px"><summary>Full Audit Trail (optional)</summary><pre style="white-space:pre-wrap">mock audit entries…</pre></details>
+
+  <div class="muted" id="sync-ts" style="font-size:var(--fs-sm)"></div>
+
+  <div id="sync-list"></div>
+
+  <div class="row space" style="margin-top:8px">
+    <button id="btn-retry-all" style="display:none">
+      <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>
+      Retry All Failed
+    </button>
+    <button id="btn-back" class="primary">
+      <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+      Back to Queue
+    </button>
+  </div>
+
+  <details class="card">
+    <summary>Full Audit Trail (optional)</summary>
+    <pre style="white-space:pre-wrap; font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--text-muted)">mock audit entries…</pre>
+  </details>
 </section>

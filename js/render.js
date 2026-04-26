@@ -3,6 +3,9 @@ import { state, activeScenario, setScenario, setQueueFilter, setShowDone, isDone
 import { mount } from './dom.js';
 import { showRedFlagToast, sparkline, playTranscript, stopTranscript } from './interactions.js';
 
+const ICON = (id, cls = 'icon') =>
+  `<svg class="${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+
 let noteSaveTimer = null;
 function formatSavedAgo(iso) {
   if (!iso) return 'No note yet';
@@ -23,8 +26,19 @@ export function renderIdentityChip(role) {
   if (!chip || !who) return;
   const nameEl = chip.querySelector('.identity-name');
   const idEl   = chip.querySelector('.identity-id');
-  nameEl.textContent = `👤 ${who.name}`;
+  const avatar = chip.querySelector('.identity-avatar');
+  nameEl.textContent = who.name;
   idEl.textContent   = `ID ${who.id}`;
+  if (avatar) {
+    const initials = who.name
+      .split(/\s+/)
+      .map(w => w.replace(/[^A-Za-z]/g, '')[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join('')
+      .toUpperCase();
+    avatar.textContent = initials || (role === 'nurse' ? 'NS' : 'DR');
+  }
 }
 
 function absTime(iso) {
@@ -53,36 +67,32 @@ function buildIso(hhmm) {
 }
 
 export function showSyncToast(outcome) {
-  const mount = document.getElementById('sum-toast-mount');
-  if (!mount || !outcome) return;
+  const mountEl = document.getElementById('sum-toast-mount');
+  if (!mountEl || !outcome) return;
   const tone = outcome.result;
   const titles = { ok: 'Synced', partial: 'Partial Sync', fail: 'Sync Failed' };
-  const icons  = { ok: '✅',    partial: '⚠️',           fail: '❌' };
+  const iconIds = { ok: 'check', partial: 'alert-triangle', fail: 'x' };
   const systems = outcome.details
     .filter(d => d.outcome && d.outcome !== 'fail')
     .map(d => d.key.toUpperCase()).join(' · ');
   const at = absTime(outcome.at);
 
-  const toast = document.createElement('div');
-  toast.className = `toast toast-${tone}`;
-  toast.setAttribute('role', 'status');
-  toast.setAttribute('aria-live', 'polite');
+  mount(mountEl, `
+    <div class="toast toast-${tone}" role="status" aria-live="polite">
+      <div class="toast-row">
+        <span class="toast-icon">${ICON(iconIds[tone] || 'check')}</span>
+        <strong>${titles[tone] || 'Sync'}</strong>
+        <button class="toast-close" aria-label="Dismiss">×</button>
+      </div>
+      <div class="toast-body">${[systems, at].filter(Boolean).join(' · ')}</div>
+    </div>
+  `);
 
-  const row = document.createElement('div'); row.className = 'toast-row';
-  const iconEl = document.createElement('span'); iconEl.className = 'toast-icon'; iconEl.textContent = icons[tone] || '';
-  const titleEl = document.createElement('strong'); titleEl.textContent = titles[tone] || 'Sync';
-  const close = document.createElement('button'); close.className = 'toast-close'; close.setAttribute('aria-label', 'Dismiss'); close.textContent = '×';
-  row.append(iconEl, titleEl, close);
-
-  const body = document.createElement('div'); body.className = 'toast-body';
-  body.textContent = [systems, at].filter(Boolean).join(' · ');
-
-  toast.append(row, body);
-  mount.replaceChildren(toast);
-
-  const dismiss = () => toast.remove();
-  close.addEventListener('click', dismiss);
-  setTimeout(() => { if (mount.contains(toast)) dismiss(); }, 5000);
+  const toast = mountEl.querySelector('.toast');
+  const close = mountEl.querySelector('.toast-close');
+  const dismiss = () => toast && toast.remove();
+  close && close.addEventListener('click', dismiss);
+  setTimeout(() => { if (toast && mountEl.contains(toast)) dismiss(); }, 5000);
 }
 
 function deriveStatus(s) {
@@ -125,16 +135,22 @@ function sortedScenarios() {
 
 function critChips(s) {
   const chips = [];
-  if (s.allergy.length) chips.push(`<span class="chip flag">🚫 Allergy: ${s.allergy[0].drug}</span>`);
+  if (s.allergy.length) {
+    chips.push(`<span class="chip flag">${ICON('ban', 'icon icon-sm')} Allergy: ${s.allergy[0].drug}</span>`);
+  }
   const abn = s.labs.filter(l => l.abnormal);
   if (abn.length) {
+    const trendIcon = abn[0].arrow === '↑' ? 'trend-up' : 'trend-down';
     const label = abn.length === 1
-      ? `${abn[0].name}${abn[0].arrow}`
-      : `${abn[0].name}${abn[0].arrow} ×${abn.length}`;
-    chips.push(`<span class="chip flag">⚠️ Abnormal: ${label}</span>`);
+      ? abn[0].name
+      : `${abn[0].name} ×${abn.length}`;
+    chips.push(`<span class="chip flag">${ICON(trendIcon, 'icon icon-sm')} ${label}</span>`);
   }
-  s.redFlags.forEach(f => chips.push(`<span class="chip flag">🔴 ${f.label}</span>`));
-  if (s.labPending) chips.push(`<span class="chip warn">🧪 Lab pending</span>`);
+  s.redFlags.forEach(f => chips.push(
+    `<span class="chip flag">${ICON('alert-octagon', 'icon icon-sm')} ${f.label}</span>`));
+  if (s.labPending) {
+    chips.push(`<span class="chip warn">${ICON('flask', 'icon icon-sm')} Lab pending</span>`);
+  }
   return chips.join('');
 }
 
@@ -179,80 +195,104 @@ function renderQueue() {
     const red = s.redFlags.length > 0;
     const isRec = s.id === recId;
     const waitingChip = (status === 'waiting' || status === 'ready')
-      ? `<span class="chip">⏳ Waiting ${s.waitingMin}m</span>` : '';
+      ? `<span class="chip">${ICON('clock', 'icon icon-sm')} ${s.waitingMin}m</span>` : '';
     return `
-      <div class="queue-row ${red ? 'red' : ''} ${status}" data-scenario="${s.id}">
-        <div class="row space">
+      <article class="queue-row ${red ? 'red' : ''} ${status}" data-scenario="${s.id}" tabindex="0" role="button" aria-label="${p.name}, ${s.reasonShort}">
+        <div class="row space wrap">
           <div>
-            <strong>${p.name}</strong>
-            <span style="color:var(--text-2)">  HN ${p.hn}  ${p.age}${p.sex}</span>
-            ${isRec ? '<span class="recommended-next">Recommended next</span>' : ''}
+            <div class="pt-name">${p.name}${isRec ? '<span class="recommended-next">Recommended next</span>' : ''}</div>
+            <div class="pt-meta">
+              <span>HN ${p.hn}</span>
+              <span>·</span>
+              <span>${p.age}${p.sex}</span>
+            </div>
           </div>
-          <div>
-            <span class="chip">⏱ Appt ${s.scheduledAt}</span>
+          <div class="row wrap" style="gap:6px">
+            <span class="chip">${ICON('clock', 'icon icon-sm')} Appt ${s.scheduledAt}</span>
             ${waitingChip}
             <span class="status-pill ${status}">${STATUS_LABEL[status]}</span>
           </div>
         </div>
-        <div style="color:var(--text-2);margin:4px 0">${s.reasonShort}</div>
+        <div class="pt-reason">${s.reasonShort}</div>
         <div class="crit-chips">${critChips(s)}</div>
-      </div>
+      </article>
     `;
   }).join('');
 
-  mount(list, rows || '<p style="color:var(--text-2);padding:16px">No patients match this filter.</p>');
+  mount(list, rows || `<div class="card"><p class="muted" style="text-align:center;padding:var(--sp-4) 0">No patients match this filter.</p></div>`);
 
   list.querySelectorAll('.queue-row:not(.done)').forEach(el => {
-    el.addEventListener('click', () => {
+    const open = () => {
       setScenario(el.dataset.scenario);
       document.querySelector('[data-screen="summary"]').click();
-    });
+    };
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
   });
 
+  list.querySelectorAll('.queue-row.active-row').forEach(el => el.classList.remove('active-row'));
   const activeRow = list.querySelector(`[data-scenario="${state.scenarioId}"]`);
-  if (activeRow) activeRow.style.outline = '2px solid var(--text)';
+  if (activeRow) activeRow.classList.add('active-row');
+}
+
+function vitalCell(label, value, unit, alert) {
+  return `
+    <div class="vital ${alert ? 'alert' : ''}">
+      <span class="vital-label">${label}</span>
+      <span class="vital-value">${value}${unit ? `<span class="vital-unit">${unit}</span>` : ''}</span>
+    </div>
+  `;
 }
 
 function renderSummary() {
   const s = activeScenario();
   if (!document.getElementById('sum-identity')) return;
   const p = s.patient;
-  document.getElementById('sum-identity').textContent = `${p.name} · HN ${p.hn} · ${p.age}${p.sex}`;
+  document.getElementById('sum-identity').textContent = p.name;
+  const meta = document.getElementById('sum-meta');
+  if (meta) meta.textContent = `HN ${p.hn} · ${p.age}${p.sex} · ${s.reasonShort}`;
   document.getElementById('sum-cc').textContent = `"${s.chiefComplaint}"`;
 
   const allergyHost = document.getElementById('sum-allergy');
   mount(allergyHost, s.allergy.length
-    ? s.allergy.map(a => `<div>🚫 ${a.drug} (${a.reaction})</div>`).join('')
-    : '<span style="color:var(--text-2)">No known allergies</span>');
+    ? s.allergy.map(a => `<span class="allergy-item">${ICON('ban', 'icon icon-sm')} ${a.drug} <span class="muted" style="font-size:var(--fs-xs)">(${a.reaction})</span></span>`).join('')
+    : '<div class="allergy-empty">No known allergies</div>');
 
   const v = s.vitals;
-  const vitalHtml = [
-    ['BP', v.bp, false],
-    ['HR', v.hr, v.hr > 120 || v.hr < 50],
-    ['RR', v.rr, false],
-    ['SpO2', v.spo2 + '%', v.spo2 < 92],
-    ['Temp', v.temp, v.temp > 38.5 || v.temp < 35.5]
-  ].map(([k, val, bad]) => `<span class="chip ${bad ? 'flag' : ''}">${k} ${val}${bad ? ' 🔴' : ''}</span>`).join(' ');
-  // vitals header timestamp (absolute + relative)
+  const vitalCells = [
+    ['BP', v.bp, '', false],
+    ['HR', v.hr, 'bpm', v.hr > 120 || v.hr < 50],
+    ['RR', v.rr, '/min', false],
+    ['SpO₂', v.spo2, '%', v.spo2 < 92],
+    ['Temp', v.temp, '°C', v.temp > 38.5 || v.temp < 35.5]
+  ].map(([k, val, unit, bad]) => vitalCell(k, val, unit, bad)).join('');
   const vitalsTsEl = document.getElementById('sum-vitals-ts');
   if (vitalsTsEl) vitalsTsEl.textContent = tsPair(buildIso(v.takenAt));
-  mount(document.getElementById('sum-vitals'), vitalHtml);
+  mount(document.getElementById('sum-vitals'), vitalCells);
 
-  // labs: shared header when all receivedAt equal, per-row otherwise
   const abnormal = s.labs.filter(l => l.abnormal);
   const labsTsEl = document.getElementById('sum-labs-ts');
   const allSame = abnormal.length > 0 && abnormal.every(l => l.receivedAt === abnormal[0].receivedAt);
   if (labsTsEl) labsTsEl.textContent = allSame ? tsPair(abnormal[0].receivedAt) : '';
   mount(document.getElementById('sum-labs'), abnormal.length
     ? abnormal.map(l => {
-        const perRow = allSame ? '' : ` <span class="ts-pair">${tsPair(l.receivedAt)}</span>`;
-        return `<div>${l.name}: ${l.values.join(' → ')} ${l.unit} ${l.arrow} <span class="sparkline">${sparkline(l.values)}</span>${perRow}</div>`;
+        const dirCls = l.arrow === '↑' ? 'up' : (l.arrow === '↓' ? 'down' : 'flat');
+        const perRow = allSame ? '' : `<span class="lab-ts">${tsPair(l.receivedAt)}</span>`;
+        return `<div class="lab-row ${dirCls}">
+          <span class="lab-name">${l.name}</span>
+          <span class="lab-values">${l.values.join(' → ')}</span>
+          <span class="lab-unit">${l.unit}</span>
+          <span class="lab-arrow">${l.arrow}</span>
+          <span class="sparkline">${sparkline(l.values)}</span>
+          ${perRow}
+        </div>`;
       }).join('')
-    : '<span style="color:var(--text-2)">No abnormal trends.</span>');
+    : '<div class="muted" style="font-size:var(--fs-sm)">No abnormal trends.</div>');
 
-  mount(document.getElementById('sum-meds'), s.meds.map(m => `<li>${m.name} ${m.dose} ${m.freq}</li>`).join(''));
+  mount(document.getElementById('sum-meds'), s.meds.map(m =>
+    `<li>${ICON('pill')} <span class="med-name">${m.name}</span> <span class="med-dose">${m.dose} · ${m.freq}</span></li>`
+  ).join(''));
 
-  // consume one-shot sync outcome toast
   if (state.lastSyncOutcome && state.lastSyncOutcome.scenarioId === state.scenarioId) {
     showSyncToast(state.lastSyncOutcome);
     clearLastSyncOutcome();
@@ -263,7 +303,7 @@ function renderSummary() {
   const videoBtn = document.getElementById('btn-start-video');
   if (state.role === 'nurse') {
     videoBtn.disabled = true;
-    videoBtn.textContent = 'Consult pending — doctor review';
+    mount(videoBtn, `${ICON('clock')} <span>Consult pending — doctor review</span>`);
   } else {
     videoBtn.addEventListener('click', () => {
       document.querySelector('[data-screen="video"]').click();
@@ -275,12 +315,28 @@ function renderVideo() {
   const s = activeScenario();
   if (!document.getElementById('vid-identity')) return;
   const p = s.patient;
-  document.getElementById('vid-identity').textContent = `Video Consult · ${p.name} · HN ${p.hn} · ${p.age}${p.sex}`;
+  document.getElementById('vid-identity').textContent = `${p.name} · HN ${p.hn} · ${p.age}${p.sex}`;
+
+  const img = document.getElementById('vid-patient-img');
+  if (img) {
+    const portrait = ['A', 'B', 'C'].includes(s.id) ? `assets/patient-${s.id}.svg` : 'assets/video-placeholder.svg';
+    img.src = portrait;
+    img.alt = `Video feed of ${p.name}, ${p.age}${p.sex}`;
+  }
+
+  const selfImg = document.getElementById('vid-self-img');
+  const selfLabel = document.getElementById('vid-self-label');
+  if (selfImg && selfLabel) {
+    const isNurse = state.role === 'nurse';
+    selfImg.src = isNurse ? 'assets/nurse.svg' : 'assets/doctor.svg';
+    selfImg.alt = isNurse ? 'Self view: Nurse' : 'Self view: Doctor';
+    selfLabel.textContent = isNurse ? 'Nurse · self-view' : 'Dr · self-view';
+  }
 
   if (s.redFlags.length) {
-    document.getElementById('vid-redband').style.display = 'block';
+    document.getElementById('vid-redband').style.display = '';
     mount(document.getElementById('vid-flags'),
-      s.redFlags.map(f => `<span class="chip flag">${f.label}</span>`).join(' '));
+      s.redFlags.map(f => `<span class="chip flag">${ICON('alert-octagon', 'icon icon-sm')} ${f.label}</span>`).join(''));
   }
 
   const v = s.vitals;
@@ -288,18 +344,21 @@ function renderVideo() {
     <span class="chip">BP ${v.bp}</span>
     <span class="chip ${v.hr>120?'flag':''}">HR ${v.hr}</span>
     <span class="chip">RR ${v.rr}</span>
-    <span class="chip ${v.spo2<92?'flag':''}">SpO2 ${v.spo2}%</span>
-    <span class="chip">Temp ${v.temp}</span>
+    <span class="chip ${v.spo2<92?'flag':''}">SpO₂ ${v.spo2}%</span>
+    <span class="chip">Temp ${v.temp}°C</span>
   `);
 
   const abnormal = s.labs.filter(l => l.abnormal);
   mount(document.getElementById('vid-labs'), abnormal.length
-    ? abnormal.map(l => `<span class="chip flag">${l.name} ${l.values.at(-1)} ${l.arrow}</span>`).join(' ')
-    : '<span style="color:var(--text-2)">None</span>');
+    ? abnormal.map(l => `<span class="chip flag">${ICON(l.arrow === '↑' ? 'trend-up' : 'trend-down', 'icon icon-sm')} ${l.name} ${l.values.at(-1)}</span>`).join('')
+    : '<span class="muted" style="font-size:var(--fs-sm)">None</span>');
 
   mount(document.getElementById('vid-meds'), `
-    <div>${s.meds.map(m => `${m.name} ${m.dose}`).join(' · ')}</div>
-    <div style="margin-top:4px">Allergy: ${s.allergy.length ? s.allergy.map(a => `🚫 ${a.drug}`).join(' · ') : 'none'}</div>
+    <div class="row wrap" style="gap:6px;margin-bottom:6px">${s.meds.map(m => `<span class="chip">${ICON('pill','icon icon-sm')} ${m.name} ${m.dose}</span>`).join('')}</div>
+    <div class="row wrap" style="gap:6px">
+      <span class="muted" style="font-size:var(--fs-sm)">Allergy:</span>
+      ${s.allergy.length ? s.allergy.map(a => `<span class="chip flag">${ICON('ban','icon icon-sm')} ${a.drug}</span>`).join('') : '<span class="muted" style="font-size:var(--fs-sm)">none</span>'}
+    </div>
   `);
 
   playTranscript(s.transcript);
@@ -344,7 +403,7 @@ function renderVideo() {
 function renderAssessment() {
   const s = activeScenario();
   if (!document.getElementById('as-name')) return;
-  document.getElementById('as-name').textContent = s.patient.name;
+  document.getElementById('as-name').textContent = `${s.patient.name} · HN ${s.patient.hn}`;
 
   const d = s.soapDraft;
   const note = getNote(s.patient.hn);
@@ -364,10 +423,10 @@ function renderAssessment() {
   }
 
   mount(document.getElementById('as-soap'), `
-    <div><strong>S:</strong> ${d.s}</div>
-    <div><strong>O:</strong> ${d.o}</div>
-    <div style="margin-top:4px"><strong>A:</strong> <textarea style="width:100%">${soapA}</textarea></div>
-    <div><strong>P:</strong> <textarea style="width:100%">${d.p}</textarea></div>
+    <div class="soap-row"><span class="soap-key">S</span><p>${d.s}</p></div>
+    <div class="soap-row"><span class="soap-key">O</span><p>${d.o}</p></div>
+    <div class="soap-row"><span class="soap-key">A</span><textarea>${soapA}</textarea></div>
+    <div class="soap-row"><span class="soap-key">P</span><textarea>${d.p}</textarea></div>
   `);
 
   const hn = s.patient.hn;
@@ -392,17 +451,22 @@ function renderAssessment() {
         <input data-k="dose"     value="${r.dose || ''}"     placeholder="Dose" />
         <input data-k="freq"     value="${r.freq || ''}"     placeholder="Freq" />
         <input data-k="duration" value="${r.duration || ''}" placeholder="Duration" />
-        <button class="rx-del" aria-label="Remove">✕</button>
+        <button class="rx-del" aria-label="Remove drug">${ICON('x')}</button>
       </div>
     `).join(''));
   } else {
     mount(rxHost, rxRows.length ? rxRows.map(r => {
       const tags = [];
-      if (r.interaction === 'caution') tags.push('<span class="chip flag">⚠️ interaction</span>');
-      else if (r.interaction) tags.push('<span class="chip">✓ safe</span>');
-      if (r.allergyCheck === 'safe') tags.push('<span class="chip">✓ allergy-clear</span>');
-      return `<div>${r.drug} ${r.dose || ''} · ${r.freq || ''} · ${r.duration || ''} ${tags.join(' ')}</div>`;
-    }).join('') : '<span style="color:var(--text-2)">No prescriptions.</span>');
+      if (r.interaction === 'caution') tags.push(`<span class="chip flag">${ICON('alert-triangle','icon icon-sm')} interaction</span>`);
+      else if (r.interaction) tags.push(`<span class="chip ok">${ICON('check','icon icon-sm')} safe</span>`);
+      if (r.allergyCheck === 'safe') tags.push(`<span class="chip ok">${ICON('shield','icon icon-sm')} allergy-clear</span>`);
+      return `<div class="rx-static">
+        ${ICON('pill')}
+        <span class="rx-name">${r.drug}</span>
+        <span class="rx-detail">${[r.dose, r.freq, r.duration].filter(Boolean).join(' · ')}</span>
+        <span class="row" style="gap:4px;margin-left:auto">${tags.join('')}</span>
+      </div>`;
+    }).join('') : '<div class="muted" style="font-size:var(--fs-sm)">No prescriptions.</div>');
   }
 
   btnEdit.onclick = () => {
@@ -441,9 +505,9 @@ function renderAssessment() {
 
   const erBox = document.getElementById('as-er');
   erBox.checked = s.referral.er;
-  document.getElementById('as-er-banner').style.display = s.referral.er ? 'block' : 'none';
+  document.getElementById('as-er-banner').style.display = s.referral.er ? '' : 'none';
   erBox.addEventListener('change', () => {
-    document.getElementById('as-er-banner').style.display = erBox.checked ? 'block' : 'none';
+    document.getElementById('as-er-banner').style.display = erBox.checked ? '' : 'none';
   });
   document.getElementById('as-dept').value = s.referral.dept || 'None';
 
@@ -463,22 +527,23 @@ function renderAssessment() {
 function renderSync() {
   const s = activeScenario();
   if (!document.getElementById('sync-list')) return;
-  document.getElementById('sync-name').textContent = s.patient.name;
-  document.getElementById('sync-ts').textContent = new Date().toISOString().replace('T', ' ').slice(0, 19) + ' GMT+7';
+  document.getElementById('sync-name').textContent = `${s.patient.name} · HN ${s.patient.hn}`;
+  document.getElementById('sync-ts').textContent = `Started ${new Date().toISOString().replace('T', ' ').slice(0, 19)} GMT+7`;
 
   const dests = [
-    { key: 'his', label: 'HIS / EMR' },
+    { key: 'his',      label: 'HIS / EMR' },
     { key: 'pharmacy', label: 'Pharmacy System' },
-    { key: 'lab', label: 'Lab Order System' },
-    { key: 'nhso', label: 'NHSO (30-baht)' }
+    { key: 'lab',      label: 'Lab Order System' },
+    { key: 'nhso',     label: 'NHSO (30-baht)' }
   ];
   if (normalize(s.syncOutcome.er).result) dests.push({ key: 'er', label: 'ER System' });
 
   const list = document.getElementById('sync-list');
   mount(list, dests.map(d => `
-    <div class="sync-row" id="sync-${d.key}">
-      <span>⏳ ${d.label}</span>
-      <span class="ts">syncing…</span>
+    <div class="sync-row syncing" id="sync-${d.key}">
+      <span class="sync-icon">${ICON('refresh','icon icon-sm')}</span>
+      <span class="sync-label">${d.label}</span>
+      <span class="sync-meta">syncing…</span>
     </div>
   `).join(''));
 
@@ -499,14 +564,22 @@ function renderSync() {
   }
 
   function paintRow(row, d, n) {
-    row.classList.remove('ok', 'fail');
+    row.classList.remove('ok', 'fail', 'syncing');
     if (n.result === 'ok') {
       row.classList.add('ok');
-      mount(row, `<span>✅ ${d.label}</span><span>synced ${new Date().toTimeString().slice(0,8)}</span>`);
+      mount(row, `
+        <span class="sync-icon">${ICON('check','icon icon-sm')}</span>
+        <span class="sync-label">${d.label}</span>
+        <span class="sync-meta">synced ${new Date().toTimeString().slice(0,8)}</span>
+      `);
     } else if (n.result === 'fail') {
       row.classList.add('fail');
       const meta = [n.code, n.reason].filter(Boolean).join(' · ') || 'FAILED';
-      mount(row, `<span>❌ ${d.label}</span><span>${meta} <button class="retry">Retry</button></span>`);
+      mount(row, `
+        <span class="sync-icon">${ICON('x','icon icon-sm')}</span>
+        <span class="sync-label">${d.label}</span>
+        <span class="sync-meta">${meta} <button class="retry">${ICON('refresh','icon icon-sm')} Retry</button></span>
+      `);
       row.querySelector('.retry').addEventListener('click', () => retry(d));
     }
   }
@@ -514,11 +587,21 @@ function renderSync() {
   function retry(d) {
     const row = document.getElementById(`sync-${d.key}`);
     if (!row) return;
-    mount(row, `<span>⏳ ${d.label}</span><span>retrying…</span>`);
+    row.classList.remove('fail', 'ok');
+    row.classList.add('syncing');
+    mount(row, `
+      <span class="sync-icon">${ICON('refresh','icon icon-sm')}</span>
+      <span class="sync-label">${d.label}</span>
+      <span class="sync-meta">retrying…</span>
+    `);
     setTimeout(() => {
       if (!document.body.contains(row)) return;
-      row.classList.remove('fail'); row.classList.add('ok');
-      mount(row, `<span>✅ ${d.label}</span><span>synced ${new Date().toTimeString().slice(0,8)}</span>`);
+      row.classList.remove('syncing'); row.classList.add('ok');
+      mount(row, `
+        <span class="sync-icon">${ICON('check','icon icon-sm')}</span>
+        <span class="sync-label">${d.label}</span>
+        <span class="sync-meta">synced ${new Date().toTimeString().slice(0,8)}</span>
+      `);
       s.syncOutcome[d.key] = 'ok';
       updatePill(dests);
       finalize();
@@ -532,13 +615,16 @@ function renderSync() {
     const retryAll = document.getElementById('btn-retry-all');
     bar.classList.remove('syncing', 'ok', 'partial', 'fail');
     if (fails === 0) {
-      bar.classList.add('ok'); bar.textContent = '✅ Sync Complete';
+      bar.classList.add('ok');
+      mount(bar, `${ICON('check-circle')} <span>Sync Complete</span>`);
       retryAll.style.display = 'none';
     } else if (fails < dests.length) {
-      bar.classList.add('partial'); bar.textContent = `⚠️ Partial Sync Failure · ${fails} of ${dests.length} failed`;
+      bar.classList.add('partial');
+      mount(bar, `${ICON('alert-triangle')} <span>Partial Sync Failure · ${fails} of ${dests.length} failed</span>`);
       retryAll.style.display = '';
     } else {
-      bar.classList.add('fail'); bar.textContent = '❌ All Systems Failed';
+      bar.classList.add('fail');
+      mount(bar, `${ICON('x-circle')} <span>All Systems Failed</span>`);
       retryAll.style.display = '';
     }
     const result = fails === 0 ? 'ok' : (fails < dests.length ? 'partial' : 'fail');

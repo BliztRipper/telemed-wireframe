@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Patient C: Anan, 45 year old man on a video call from his office">
+  <defs>
+    <linearGradient id="cBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#DCE7E0"/>
+      <stop offset="1" stop-color="#A8C2B5"/>
+    </linearGradient>
+    <linearGradient id="cSkin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E5B084"/>
+      <stop offset="1" stop-color="#C2855A"/>
+    </linearGradient>
+    <linearGradient id="cPolo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3F8C7A"/>
+      <stop offset="1" stop-color="#27604F"/>
+    </linearGradient>
+    <radialGradient id="cGlow" cx="0.5" cy="0.45" r="0.6">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Room background: home office -->
+  <rect width="800" height="450" fill="url(#cBg)"/>
+  <!-- Bookshelf right -->
+  <rect x="600" y="60" width="160" height="220" rx="4" fill="#A78A6E"/>
+  <line x1="600" y1="120" x2="760" y2="120" stroke="#7E654C" stroke-width="2"/>
+  <line x1="600" y1="180" x2="760" y2="180" stroke="#7E654C" stroke-width="2"/>
+  <line x1="600" y1="240" x2="760" y2="240" stroke="#7E654C" stroke-width="2"/>
+  <!-- books -->
+  <rect x="612" y="78" width="14" height="36" fill="#D77A5C"/>
+  <rect x="630" y="74" width="14" height="40" fill="#5C7AA8"/>
+  <rect x="648" y="82" width="14" height="32" fill="#E2B66B"/>
+  <rect x="666" y="76" width="14" height="38" fill="#84A07A"/>
+  <rect x="612" y="138" width="14" height="36" fill="#7AA89C"/>
+  <rect x="630" y="134" width="14" height="40" fill="#A87A8B"/>
+  <rect x="648" y="142" width="14" height="32" fill="#5C7AA8"/>
+  <!-- Plant left -->
+  <ellipse cx="100" cy="290" rx="50" ry="14" fill="#7A6249"/>
+  <path d="M70 290 Q60 230, 80 200 Q90 230, 90 280 Z" fill="#2D6B4A"/>
+  <path d="M120 290 Q140 240, 130 195 Q120 230, 110 280 Z" fill="#3F8C5C"/>
+  <path d="M100 290 Q108 220, 100 180 Q92 220, 100 280 Z" fill="#357A52"/>
+  <!-- Desk surface -->
+  <rect x="0" y="380" width="800" height="70" fill="#7A6249"/>
+  <ellipse cx="400" cy="380" rx="500" ry="18" fill="#5C4A33" opacity="0.4"/>
+  <!-- Soft glow -->
+  <rect width="800" height="450" fill="url(#cGlow)"/>
+
+  <!-- Person -->
+  <!-- Shoulders / polo -->
+  <path d="M190 450 C 210 360, 285 322, 400 322 C 515 322, 590 360, 610 450 Z" fill="url(#cPolo)"/>
+  <!-- Polo placket -->
+  <path d="M380 332 L400 380 L420 332 Z" fill="#1F4A3F"/>
+  <line x1="395" y1="350" x2="395" y2="372" stroke="#5DAE99" stroke-width="2"/>
+  <circle cx="395" cy="354" r="2" fill="#7CC4B1"/>
+  <circle cx="395" cy="368" r="2" fill="#7CC4B1"/>
+  <!-- Neck -->
+  <path d="M370 290 Q400 318, 430 290 L430 330 Q400 343, 370 330 Z" fill="url(#cSkin)"/>
+  <!-- Head -->
+  <ellipse cx="400" cy="218" rx="90" ry="103" fill="url(#cSkin)"/>
+  <!-- Ears -->
+  <ellipse cx="313" cy="225" rx="14" ry="22" fill="#B6814F"/>
+  <ellipse cx="487" cy="225" rx="14" ry="22" fill="#B6814F"/>
+  <!-- Hair: dark, short, side-parted -->
+  <path d="M312 178 Q 320 110, 400 105 Q 480 110, 488 178 Q 470 150, 410 148 Q 360 150, 350 165 Q 340 175, 312 178 Z" fill="#1F1A14"/>
+  <!-- Side part highlight -->
+  <path d="M345 155 Q 360 138, 405 138" stroke="#3A2F22" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Eyebrows -->
+  <path d="M348 198 Q360 192, 382 200" stroke="#1F1A14" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M418 200 Q440 192, 452 198" stroke="#1F1A14" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <!-- Glasses -->
+  <circle cx="365" cy="220" r="22" fill="none" stroke="#2B2B2B" stroke-width="3"/>
+  <circle cx="435" cy="220" r="22" fill="none" stroke="#2B2B2B" stroke-width="3"/>
+  <line x1="387" y1="220" x2="413" y2="220" stroke="#2B2B2B" stroke-width="3"/>
+  <!-- Eyes -->
+  <ellipse cx="365" cy="220" rx="6" ry="4" fill="#1A1A1A"/>
+  <ellipse cx="435" cy="220" rx="6" ry="4" fill="#1A1A1A"/>
+  <circle cx="367" cy="218.5" r="1.5" fill="#FFFFFF"/>
+  <circle cx="437" cy="218.5" r="1.5" fill="#FFFFFF"/>
+  <!-- Nose -->
+  <path d="M398 235 Q 393 260, 400 270 Q 408 260, 402 235" stroke="#9C6840" stroke-width="2" fill="none"/>
+  <!-- Mouth: relaxed smile -->
+  <path d="M375 287 Q 400 296, 425 287" stroke="#7A3F2A" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M380 287 Q 400 292, 420 287" fill="#C97562" opacity="0.55"/>
+  <!-- Cheek warmth -->
+  <ellipse cx="345" cy="252" rx="13" ry="7" fill="#E68A6F" opacity="0.22"/>
+  <ellipse cx="455" cy="252" rx="13" ry="7" fill="#E68A6F" opacity="0.22"/>
+</svg>

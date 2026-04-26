@@ -1,19 +1,21 @@
-# Telemed Wireframe — Technical Specification
+# Telemed Clinical Console — Technical Specification
 
-> Interactive grayscale wireframe demo for a 5-screen telemedicine clinical flow.
+> Production-grade telemedicine console for doctors and nurses, 5-screen OPD flow.
 > Live: https://bliztripper.github.io/telemed-wireframe/
 
-This document is the canonical technical reference for the `telemed-wireframe` project. It covers the full architecture, data model, state machine, rendering pipeline, interactions, screens, design tokens, accessibility behavior, and file-by-file API surface.
+This document is the canonical technical reference. It covers the full architecture, data model, state machine, rendering pipeline, interactions, screens, design tokens, accessibility behavior, and file-by-file API surface.
+
+**v3 Production Release (Apr 27, 2026)** replaces the original grayscale wireframe with a launch-ready clinical UI: cyan + emerald palette, Figtree/Noto Sans typography, inline SVG icon sprite, mobile-responsive layout, universal focus rings. State schema unchanged; only visuals + a11y + responsive behavior.
 
 ---
 
 ## 1. Purpose & Scope
 
-The wireframe simulates a doctor/nurse OPD (out-patient department) consult flow on a telemedicine platform. It is a **pure-frontend, zero-build static site** intended as:
+The console runs a doctor/nurse OPD (out-patient department) consult flow on a telemedicine platform. It is a **pure-frontend, zero-build static site** intended as:
 
-- A **design artifact** for UX review — grayscale-only to force reviewers to focus on hierarchy/flow instead of color.
-- A **click-through prototype** exercising realistic patient scenarios (stable, red-flag, sync failure).
-- A **baseline reference implementation** from which the production Vue/React/Flutter UI can be specced.
+- A **production-launch UI** showcasing the full clinical workflow with realistic interactions.
+- A **click-through prototype** exercising patient scenarios (stable, red-flag, sync failure).
+- A **reference implementation** from which a backend-wired Vue/React/Flutter version can be specced.
 
 **Not in scope:** real backend, real telehealth streaming, real EHR integration, real authentication, internationalization, PWA/offline. Data is mocked inline; all "AI" outputs are pre-canned.
 
@@ -24,13 +26,14 @@ The wireframe simulates a doctor/nurse OPD (out-patient department) consult flow
 | Layer | Choice | Notes |
 |------|--------|------|
 | Markup | HTML5 | `index.html` shell + per-screen fragments in `screens/*.html` |
-| Styling | Vanilla CSS custom properties | Two files: `css/base.css` (tokens/layout) + `css/components.css` (widgets) |
+| Styling | Vanilla CSS custom properties | Two files: `css/base.css` (tokens/typography/layout) + `css/components.css` (components/responsive/print) |
 | Behavior | Vanilla ES Modules | No build step. Loaded via `<script type="module" src="js/nav.js">` |
 | Persistence | `localStorage` (key `telemed.state.v3`) | Single JSON blob, sync write on every mutation |
-| Rendering | `DOMParser`-based fragment builder | `js/dom.js` wraps `replaceChildren` for safer innerHTML substitution |
+| Rendering | `DOMParser`-based fragment builder | `js/dom.js` wraps `replaceChildren` to avoid direct `innerHTML` on dynamic content |
+| Iconography | Inline SVG sprite, 28 Lucide-stroked glyphs | Declared once at top of `index.html`, referenced via `<svg><use href="#i-..."/></svg>` |
+| Typography | Figtree + Noto Sans + JetBrains Mono | Loaded from Google Fonts with `font-display: swap` and preconnect |
 | Assets | 1 inline SVG placeholder | `assets/video-placeholder.svg` |
-| Hosting | GitHub Pages (static) | Open `index.html` locally or visit live URL |
-| Color mode | `filter: grayscale(100%)` on `body` | Hard-locks visual output to grayscale regardless of token values |
+| Hosting | GitHub Pages (static) | Open via local server (fragments require `fetch`) or visit live URL |
 
 No frameworks, no bundlers, no package manager. Every behavior is traceable to a file you can open in a text editor.
 
@@ -45,7 +48,12 @@ telemed-wireframe/
 ├── TECHNICAL.md            # This file
 ├── .gitignore / .gitkeep
 ├── assets/
-│   └── video-placeholder.svg   # Grey SVG stand-in for patient video feed
+│   ├── video-placeholder.svg   # Fallback silhouette for unknown scenario ids (D/E)
+│   ├── patient-A.svg           # Somchai K. portrait (scenario A video feed)
+│   ├── patient-B.svg           # Malee P. portrait (scenario B video feed)
+│   ├── patient-C.svg           # Anan R. portrait (scenario C video feed)
+│   ├── doctor.svg              # Doctor self-view PIP illustration
+│   └── nurse.svg               # Nurse self-view PIP illustration
 ├── css/
 │   ├── base.css            # Design tokens, grid layout, base resets
 │   └── components.css      # Cards, chips, toasts, sync rows, Rx editor, etc.

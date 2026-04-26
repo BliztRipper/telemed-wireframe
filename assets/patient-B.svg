@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Patient B: Malee, 67 year old woman on a video call from her bedroom, looking unwell">
+  <defs>
+    <linearGradient id="bBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F4DDD7"/>
+      <stop offset="1" stop-color="#D9B5AC"/>
+    </linearGradient>
+    <linearGradient id="bSkin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EAB593"/>
+      <stop offset="1" stop-color="#C58E6B"/>
+    </linearGradient>
+    <linearGradient id="bBlouse" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9C6F86"/>
+      <stop offset="1" stop-color="#6B4A5C"/>
+    </linearGradient>
+    <radialGradient id="bGlow" cx="0.5" cy="0.45" r="0.6">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Room background: soft warm bedroom -->
+  <rect width="800" height="450" fill="url(#bBg)"/>
+  <!-- Headboard / wall hint -->
+  <rect x="120" y="40" width="560" height="200" rx="20" fill="#D29A8E" opacity="0.6"/>
+  <!-- Lamp left -->
+  <rect x="40" y="180" width="40" height="80" fill="#B98073"/>
+  <ellipse cx="60" cy="175" rx="40" ry="22" fill="#F7E3D3"/>
+  <!-- Pillow behind -->
+  <ellipse cx="400" cy="350" rx="320" ry="60" fill="#FFFFFF" opacity="0.5"/>
+  <!-- Soft glow -->
+  <rect width="800" height="450" fill="url(#bGlow)"/>
+
+  <!-- Person -->
+  <!-- Shoulders / blouse with rounded neckline -->
+  <path d="M195 450 C 215 360, 290 325, 400 325 C 510 325, 585 360, 605 450 Z" fill="url(#bBlouse)"/>
+  <!-- Soft scarf/neckline -->
+  <ellipse cx="400" cy="335" rx="80" ry="22" fill="#C99AAE"/>
+  <!-- Neck -->
+  <path d="M370 290 Q400 318, 430 290 L430 332 Q400 346, 370 332 Z" fill="url(#bSkin)"/>
+  <!-- Head, slightly narrower -->
+  <ellipse cx="400" cy="220" rx="86" ry="102" fill="url(#bSkin)"/>
+  <!-- Ears -->
+  <ellipse cx="316" cy="225" rx="13" ry="20" fill="#B6814F"/>
+  <ellipse cx="484" cy="225" rx="13" ry="20" fill="#B6814F"/>
+  <!-- Earring dot -->
+  <circle cx="316" cy="248" r="3" fill="#E5C07B"/>
+  <circle cx="484" cy="248" r="3" fill="#E5C07B"/>
+  <!-- Hair: short bob, salt-and-pepper -->
+  <path d="M312 175 Q 320 105, 400 102 Q 480 105, 488 175 L 500 240 Q 488 200, 480 180 Q 470 150, 400 145 Q 330 150, 320 180 Q 312 200, 300 240 Z" fill="#4A4A4A"/>
+  <path d="M312 175 Q 330 130, 400 128 Q 470 130, 488 175 Q 460 152, 400 152 Q 340 152, 312 175 Z" fill="#9A9A9A" opacity="0.55"/>
+  <!-- Eyebrows: slight furrow (concerned) -->
+  <path d="M345 202 Q360 196, 382 202" stroke="#2B2B2B" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M418 202 Q440 196, 455 202" stroke="#2B2B2B" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <!-- Eyes (slightly tired, less open) -->
+  <path d="M358 220 Q365 224, 372 220" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M428 220 Q435 224, 442 220" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <ellipse cx="365" cy="222" rx="5.5" ry="3" fill="#1A1A1A"/>
+  <ellipse cx="435" cy="222" rx="5.5" ry="3" fill="#1A1A1A"/>
+  <!-- Nose -->
+  <path d="M398 233 Q 392 258, 400 268 Q 408 258, 402 233" stroke="#9C6840" stroke-width="2" fill="none"/>
+  <!-- Mouth: slight downward (uncomfortable) -->
+  <path d="M378 290 Q 400 286, 422 290" stroke="#7A3F2A" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <!-- Cheek pallor: low warmth -->
+  <ellipse cx="344" cy="252" rx="14" ry="8" fill="#E68A6F" opacity="0.18"/>
+  <ellipse cx="456" cy="252" rx="14" ry="8" fill="#E68A6F" opacity="0.18"/>
+</svg>

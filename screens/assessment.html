@@ -1,46 +1,110 @@
 <section class="screen">
-  <div class="row space" style="margin-bottom:12px">
-    <h2>Assessment & Plan · <span id="as-name"></span></h2>
+  <div class="page-header">
     <div>
-      <button id="btn-draft">Save Draft</button>
-      <button id="btn-save-sync" class="primary">Save & Sync →</button>
+      <h1>Assessment &amp; Plan</h1>
+      <div class="meta">Patient: <span id="as-name"></span></div>
+    </div>
+    <div class="actions">
+      <button id="btn-draft">
+        <svg class="icon" aria-hidden="true"><use href="#i-save"/></svg>
+        Save Draft
+      </button>
+      <button id="btn-save-sync" class="primary">
+        <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+        Save &amp; Sync
+      </button>
     </div>
   </div>
+
   <div class="card note-ref-card" id="as-note-ref" style="display:none">
-    <h3>📝 Consult note (from video call)</h3>
+    <h3><svg class="icon" aria-hidden="true"><use href="#i-edit"/></svg> Consult note (from video call)</h3>
     <pre id="as-note-body"></pre>
   </div>
+
   <div class="card">
-    <h3>🤖 AI-Generated SOAP (editable)</h3>
-    <div id="as-soap"></div>
-    <div style="margin-top:8px"><button id="btn-regen">Regenerate</button> <button id="btn-accept">Accept</button></div>
+    <div class="card-head">
+      <h3><svg class="icon" aria-hidden="true"><use href="#i-zap"/></svg> AI-Generated SOAP <span class="chip info" style="margin-left:4px">Editable</span></h3>
+    </div>
+    <div id="as-soap" class="soap-grid"></div>
+    <div class="row" style="margin-top:8px">
+      <button id="btn-regen">
+        <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>
+        Regenerate
+      </button>
+      <button id="btn-accept" class="success">
+        <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+        Accept
+      </button>
+    </div>
   </div>
+
   <div class="card">
-    <div class="row space">
-      <h3>Prescription</h3>
+    <div class="card-head">
+      <h3><svg class="icon" aria-hidden="true"><use href="#i-pill"/></svg> Prescription</h3>
       <div class="rx-actions">
-        <button id="btn-rx-edit">Edit ✎</button>
-        <button id="btn-rx-save" class="primary" style="display:none">Save ✓</button>
+        <button id="btn-rx-edit">
+          <svg class="icon" aria-hidden="true"><use href="#i-edit"/></svg>
+          Edit
+        </button>
+        <button id="btn-rx-save" class="primary" style="display:none">
+          <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+          Save
+        </button>
         <button id="btn-rx-cancel" style="display:none">Cancel</button>
       </div>
     </div>
     <div id="as-rx"></div>
-    <button id="btn-add-drug" style="margin-top:8px;display:none">+ Add Drug</button>
-    <div style="margin-top:12px">Dispense to: <select id="as-dispense"><option>Hospital Pharmacy</option><option>External Pharmacy</option><option>Patient self-pickup</option></select></div>
-  </div>
-  <div class="card">
-    <h3>Referral</h3>
-    <label><input type="checkbox" id="as-er" /> 🚨 ER escalation (immediate)</label>
-    <div id="as-er-banner" style="display:none;background:#FFEBEE;color:var(--flag);padding:8px;border-radius:var(--radius);margin-top:8px">Patient will be flagged for immediate ER handoff</div>
-    <div style="margin-top:12px">Follow-up dept:
-      <select id="as-dept">
-        <option>None</option><option>Cardiology</option><option>Endocrinology</option>
-        <option>Psychiatry</option><option>Internal Med</option><option>Surgery</option>
-        <option>OB-GYN</option><option>Pediatrics</option><option>Other</option>
+    <button id="btn-add-drug" style="display:none; align-self:flex-start">
+      <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>
+      Add Drug
+    </button>
+    <div class="row" style="gap:var(--sp-2)">
+      <span class="muted" style="font-size:var(--fs-sm)">Dispense to:</span>
+      <select id="as-dispense" style="max-width:240px">
+        <option>Hospital Pharmacy</option>
+        <option>External Pharmacy</option>
+        <option>Patient self-pickup</option>
       </select>
     </div>
   </div>
-  <details class="card"><summary>Long-form Note</summary><textarea style="width:100%;min-height:80px"></textarea></details>
-  <details class="card"><summary>ICD-10 Coding</summary><input placeholder="Search codes..." /></details>
-  <details class="card"><summary>Retrospective Trend Views</summary><p>Mock multi-year graph.</p></details>
+
+  <div class="card">
+    <h3><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg> Referral</h3>
+    <label class="er-toggle">
+      <input type="checkbox" id="as-er" />
+      <svg class="icon" aria-hidden="true" style="color:var(--danger)"><use href="#i-siren"/></svg>
+      ER escalation (immediate)
+    </label>
+    <div id="as-er-banner" class="er-banner" style="display:none">
+      <svg class="icon" aria-hidden="true"><use href="#i-alert-octagon"/></svg>
+      Patient will be flagged for immediate ER handoff
+    </div>
+    <div class="row" style="gap:var(--sp-2)">
+      <span class="muted" style="font-size:var(--fs-sm)">Follow-up dept:</span>
+      <select id="as-dept" style="max-width:240px">
+        <option>None</option>
+        <option>Cardiology</option>
+        <option>Endocrinology</option>
+        <option>Psychiatry</option>
+        <option>Internal Med</option>
+        <option>Surgery</option>
+        <option>OB-GYN</option>
+        <option>Pediatrics</option>
+        <option>Other</option>
+      </select>
+    </div>
+  </div>
+
+  <details class="card">
+    <summary>Long-form Note</summary>
+    <textarea style="min-height:120px"></textarea>
+  </details>
+  <details class="card">
+    <summary>ICD-10 Coding</summary>
+    <input type="search" placeholder="Search codes..." />
+  </details>
+  <details class="card">
+    <summary>Retrospective Trend Views</summary>
+    <p class="muted">Mock multi-year graph.</p>
+  </details>
 </section>

@@ -32,9 +32,9 @@
 
 ## Slide 4 — Solution (45s)
 
-> "Five screens, one consult. Queue → Summary → Video → Assessment → Sync. State persists across reload. Roles are enforced in the chrome. Color is reserved for production — the prototype is grayscale-locked so reviewers focus on hierarchy and flow."
+> "Five screens, one consult. Queue → Summary → Video → Assessment → Sync. State persists across reload. Roles are enforced in the chrome. The visual system is a calm clinical palette — cyan-600 primary, emerald-600 accent, slate neutrals — with Figtree + Noto Sans typography and a 28-icon Lucide-stroked SVG sprite. Every state pairs color with an icon and a text label, so meaning never lives in color alone."
 
-**Show:** the sidebar nav `1 · Queue` … `5 · Sync`, then the grayscale render side-by-side with a token swatch sheet to demonstrate the "color preserved in tokens, locked at the body filter" trick.
+**Show:** the sidebar nav `1 · Queue` … `5 · Sync`, then a vital-card with an alert state (HR 128 in danger soft) next to a calm card (BP 128/80 default) — demonstrating how hierarchy is carried by typography, color, AND iconography simultaneously.
 
 ---
 
@@ -94,7 +94,7 @@ Three points, no more.
 
 ## Slide 8 — Key learnings (45s)
 
-1. **Color is for production. Hierarchy is for review.** The grayscale lock kept every review session focused on flow, not aesthetics. We surfaced layout problems in week 1 instead of week 5.
+1. **Hierarchy first, then production palette.** We started in grayscale to force flow + density review, then swapped to the production cyan + emerald system once the hierarchy held up. Tokens stayed put; only the values changed. Same component contracts, launch-ready visual.
 2. **State persistence is a UX feature, not a backend feature.** Once we put the entire session in `localStorage`, mid-consult reload stopped breaking the demo, and the prototype suddenly felt real.
 3. **A field that doesn't earn its pixel cost should be deleted, not faked.** The AI Risk score got cut from the render the moment we couldn't say what action it drove. Data model kept it for the future; UI stopped lying.
 4. **Sync visibility is the most important micro-feature in this entire app.** Count pill + big bar + cross-screen toast is the single thing operators ask about. We got that loop right last and it changed the whole pitch.
@@ -116,8 +116,8 @@ Three points, no more.
 
 ## Q&A prep — anticipated questions
 
-**"Why grayscale?"**
-Forces reviewers to talk about hierarchy and information density, not "I don't like that blue". Tokens preserve real semantic colors for production handoff.
+**"Why did the early version look grayscale?"**
+First-pass review used a `body { filter: grayscale(100%) }` lock so every conversation was about hierarchy and information density, not "I don't like that blue". Once the layout held up under that constraint, we removed the lock and applied the production cyan + emerald palette. The token system was already in place — only the values lit up.
 
 **"How does this become real?"**
 The state machine, scenario data shape, and component contracts in [`../TECHNICAL.md`](../TECHNICAL.md) are the production spec. Swap `localStorage` for a real API client; swap mock scenarios for real EMR queries; rebuild the same components in the production framework. The flow is the deliverable, not the JS.

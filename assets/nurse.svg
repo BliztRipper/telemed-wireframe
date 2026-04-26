@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Nurse self-view: clinician in scrubs">
+  <defs>
+    <linearGradient id="nBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1B3A4B"/>
+      <stop offset="1" stop-color="#0F2230"/>
+    </linearGradient>
+    <linearGradient id="nSkin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EAB593"/>
+      <stop offset="1" stop-color="#C58E6B"/>
+    </linearGradient>
+    <linearGradient id="nScrubs" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#0891B2"/>
+    </linearGradient>
+    <radialGradient id="nGlow" cx="0.5" cy="0.4" r="0.6">
+      <stop offset="0" stop-color="#22D3EE" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="320" height="200" fill="url(#nBg)"/>
+  <rect width="320" height="200" fill="url(#nGlow)"/>
+  <rect x="0" y="120" width="320" height="3" fill="#22D3EE" opacity="0.18"/>
+
+  <!-- Scrubs shoulders -->
+  <path d="M40 200 C 60 150, 110 130, 160 130 C 210 130, 260 150, 280 200 Z" fill="url(#nScrubs)"/>
+  <!-- V-neck -->
+  <path d="M140 145 L160 178 L180 145 L180 158 L160 188 L140 158 Z" fill="#06849C"/>
+  <!-- Pocket pen -->
+  <rect x="200" y="158" width="14" height="20" rx="2" fill="#0E7490"/>
+  <rect x="205" y="155" width="2" height="14" rx="1" fill="#FFFFFF"/>
+  <!-- Name embroidery -->
+  <rect x="105" y="170" width="32" height="3" rx="1" fill="#FFFFFF" opacity="0.5"/>
+
+  <!-- Neck -->
+  <path d="M148 110 Q160 130, 172 110 L172 145 Q160 155, 148 145 Z" fill="url(#nSkin)"/>
+  <!-- Head -->
+  <ellipse cx="160" cy="78" rx="36" ry="42" fill="url(#nSkin)"/>
+  <!-- Ears -->
+  <ellipse cx="125" cy="80" rx="5.5" ry="8" fill="#B6814F"/>
+  <ellipse cx="195" cy="80" rx="5.5" ry="8" fill="#B6814F"/>
+  <!-- Hair: tied back, dark -->
+  <path d="M124 58 Q 132 28, 160 27 Q 188 28, 196 58 L 200 78 Q 188 60, 160 58 Q 132 60, 120 78 Z" fill="#2B2218"/>
+  <!-- Bun behind -->
+  <ellipse cx="160" cy="42" rx="14" ry="10" fill="#2B2218"/>
+  <!-- Earrings -->
+  <circle cx="125" cy="92" r="2" fill="#E5C07B"/>
+  <circle cx="195" cy="92" r="2" fill="#E5C07B"/>
+  <!-- Eyebrows -->
+  <path d="M139 70 Q146 67, 152 70" stroke="#2B2B2B" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <path d="M168 70 Q174 67, 181 70" stroke="#2B2B2B" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <!-- Eyes -->
+  <ellipse cx="146" cy="80" rx="2.4" ry="1.8" fill="#1A1A1A"/>
+  <ellipse cx="174" cy="80" rx="2.4" ry="1.8" fill="#1A1A1A"/>
+  <circle cx="146.5" cy="79.5" r="0.7" fill="#FFFFFF"/>
+  <circle cx="174.5" cy="79.5" r="0.7" fill="#FFFFFF"/>
+  <!-- Nose -->
+  <path d="M159 86 Q 156 99, 160 104 Q 164 99, 161 86" stroke="#9C6840" stroke-width="1" fill="none"/>
+  <!-- Mouth: warm smile -->
+  <path d="M150 112 Q 160 118, 170 112" stroke="#7A3F2A" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <path d="M152 112 Q 160 116, 168 112" fill="#C97562" opacity="0.5"/>
+  <!-- Cheek warmth -->
+  <ellipse cx="138" cy="93" rx="6" ry="3" fill="#E68A6F" opacity="0.28"/>
+  <ellipse cx="182" cy="93" rx="6" ry="3" fill="#E68A6F" opacity="0.28"/>
+</svg>

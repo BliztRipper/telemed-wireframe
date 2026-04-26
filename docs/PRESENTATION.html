@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Telemed Wireframe — Final Demo</title>
+<title>Telemed Clinical Console — Final Demo</title>
 <style>
   :root {
     --bg: #FFFFFF;
-    --surface: #F5F5F5;
-    --border: #E0E0E0;
-    --text: #1A1A1A;
-    --text-2: #666666;
-    --accent: #333333;
-    --flag: #D32F2F;
-    --ok: #2E7D32;
-    --warn: #F9A825;
-    --radius: 6px;
+    --surface: #F8FAFC;
+    --border: #E2E8F0;
+    --text: #0F172A;
+    --text-2: #475569;
+    --accent: #0891B2;
+    --flag: #DC2626;
+    --ok: #059669;
+    --warn: #D97706;
+    --radius: 8px;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; height: 100%; }
@@ -153,7 +153,7 @@
     <span class="kicker">Slide 4 · 0:45</span>
     <h2>Solution</h2>
     <h1>Five screens. One consult. State persists across reload.</h1>
-    <p>Queue → Summary → Video → Assessment → Sync. Roles enforced in the chrome (sidebar disables doctor-only screens for nurses, auto-bounces on switch). Color is reserved for production — the prototype is grayscale-locked so reviewers focus on hierarchy and flow.</p>
+    <p>Queue → Summary → Video → Assessment → Sync. Roles enforced in the chrome (sidebar disables doctor-only screens for nurses, auto-bounces on switch). Production visual system: calm clinical palette — cyan-600 primary, emerald-600 accent, slate neutrals — with Figtree + Noto Sans typography and a 28-icon Lucide-stroked SVG sprite. Every state pairs color with an icon and a text label.</p>
     <figure class="shot">
       <img src="screenshots/01-queue-scenario-a.png" alt="Queue screen with 3 scenarios sorted red-flag-first">
       <figcaption>Queue · sorted red-flag first · "Recommended next ★" pill on top live row · filter chips with counts</figcaption>
@@ -242,7 +242,7 @@
     <h2>Key learnings</h2>
     <h1>What this build taught us.</h1>
     <ol>
-      <li><strong>Color is for production. Hierarchy is for review.</strong> The grayscale lock surfaced layout problems in week 1 instead of week 5.</li>
+      <li><strong>Hierarchy first, then production palette.</strong> We started in grayscale to force flow + density review, then swapped to the production cyan + emerald system once the hierarchy held up. Tokens stayed put; only the values changed.</li>
       <li><strong>State persistence is a UX feature, not a backend feature.</strong> Putting the entire session in <code>localStorage</code> stopped mid-consult reload from breaking the demo.</li>
       <li><strong>A field that doesn't earn its pixel cost should be deleted, not faked.</strong> AI Risk got cut from the render the moment we couldn't say what action it drove.</li>
       <li><strong>Sync visibility is the most important micro-feature in this app.</strong> Count pill + big bar + cross-screen toast is the single thing operators ask about. We got it right last and it changed the whole pitch.</li>
@@ -268,7 +268,7 @@
   </section>
 
   <footer>
-    Telemed Wireframe · Final demo · 2026-04-26
+    Telemed Clinical Console · v3 Production Release · 2026-04-27
   </footer>
 
 </div>

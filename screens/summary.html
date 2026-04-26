@@ -1,26 +1,63 @@
 <section class="screen">
   <div id="sum-toast-mount"></div>
-  <div class="row space" style="margin-bottom:12px">
-    <h2 id="sum-identity"></h2>
+
+  <div class="page-header">
     <div>
-      <button id="btn-raw">Raw Data 📊</button>
-      <button id="btn-start-video" class="primary">Start Video 🎥</button>
+      <h1 id="sum-identity"></h1>
+      <div class="meta" id="sum-meta"></div>
+    </div>
+    <div class="actions">
+      <button id="btn-raw">
+        <svg class="icon" aria-hidden="true"><use href="#i-database"/></svg>
+        Raw Data
+      </button>
+      <button id="btn-start-video" class="primary">
+        <svg class="icon" aria-hidden="true"><use href="#i-video"/></svg>
+        Start Video
+      </button>
     </div>
   </div>
+
   <div id="toast-mount"></div>
+
   <div class="grid2">
-    <div class="card"><h3>Chief Complaint</h3><p id="sum-cc"></p></div>
-    <div class="card"><h3>Allergy</h3><div id="sum-allergy"></div></div>
+    <div class="card">
+      <h3><svg class="icon" aria-hidden="true"><use href="#i-clipboard"/></svg> Chief Complaint</h3>
+      <p id="sum-cc"></p>
+    </div>
+    <div class="card">
+      <h3><svg class="icon" aria-hidden="true"><use href="#i-ban"/></svg> Allergy</h3>
+      <div id="sum-allergy"></div>
+    </div>
   </div>
+
   <div class="card">
-    <div class="card-head"><h3>Latest Vitals</h3><span class="ts-pair" id="sum-vitals-ts"></span></div>
-    <div id="sum-vitals"></div>
+    <div class="card-head">
+      <h3><svg class="icon" aria-hidden="true"><use href="#i-heart-pulse"/></svg> Latest Vitals</h3>
+      <span class="ts-pair" id="sum-vitals-ts"></span>
+    </div>
+    <div id="sum-vitals" class="vitals-grid"></div>
   </div>
+
   <div class="card">
-    <div class="card-head"><h3>Abnormal Lab Trends</h3><span class="ts-pair" id="sum-labs-ts"></span></div>
+    <div class="card-head">
+      <h3><svg class="icon" aria-hidden="true"><use href="#i-flask"/></svg> Abnormal Lab Trends</h3>
+      <span class="ts-pair" id="sum-labs-ts"></span>
+    </div>
     <div id="sum-labs"></div>
   </div>
-  <div class="card"><h3>Current Meds</h3><ul id="sum-meds" style="padding-left:16px"></ul></div>
-  <details class="card"><summary>5-Year History (optional)</summary><p>Mock history block.</p></details>
-  <details class="card"><summary>Admin Metrics (optional)</summary><p>Mock admin block.</p></details>
+
+  <div class="card">
+    <h3><svg class="icon" aria-hidden="true"><use href="#i-pill"/></svg> Current Meds</h3>
+    <ul id="sum-meds" class="med-list"></ul>
+  </div>
+
+  <details class="card">
+    <summary>5-Year History (optional)</summary>
+    <p class="muted">Mock history block.</p>
+  </details>
+  <details class="card">
+    <summary>Admin Metrics (optional)</summary>
+    <p class="muted">Mock admin block.</p>
+  </details>
 </section>

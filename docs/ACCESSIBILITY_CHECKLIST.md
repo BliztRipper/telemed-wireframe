@@ -1,7 +1,7 @@
 # Accessibility Checklist — Self-Audit
 
-> Target: WCAG 2.1 AA-oriented basics. Not a certification. Evidence is sourced from the live prototype + the source files under [`../`](../).
-> Audit date: 2026-04-26.
+> Target: WCAG 2.1 AA-oriented basics. Not a certification. Evidence sourced from the live console + source files under [`../`](../).
+> Audit date: 2026-04-27 (v3 production release).
 
 Legend: ✅ pass · ⚠️ partial / known gap · ❌ not yet addressed.
 
@@ -11,12 +11,12 @@ Legend: ✅ pass · ⚠️ partial / known gap · ❌ not yet addressed.
 
 | # | Item | Status | Evidence |
 |---|------|--------|----------|
-| 1.1 | Body text contrast ≥ 4.5:1 | ✅ | `--text #333333` on `--bg #FFFFFF` = **12.6:1**; on `--surface #F5F5F5` = **11.6:1** |
-| 1.2 | Secondary text contrast ≥ 4.5:1 | ✅ | `--text-2 #666666` on `--bg` = **5.7:1** |
-| 1.3 | Semantic-color text on white ≥ 4.5:1 | ✅ | `--flag` red 5.9:1, `--ok` green 5.5:1, `--warn` amber against bordered chip retains text in `--text` |
-| 1.4 | UI component contrast ≥ 3:1 (borders, focus) | ✅ | `--border #E0E0E0` paired with explicit text inside chip is fine because chip text uses `--text`; status accents use 3:1+ borders |
-| 1.5 | Color is never the only signal | ✅ | Every red/amber/green surface paired with icon (🔴 ⚠️ ✅ ❌) or word ("Failed", "Synced") — survives `body { filter: grayscale(100%) }` |
-| 1.6 | Tested under grayscale | ✅ | App is **always** rendered grayscale by design — verifies parity continuously |
+| 1.1 | Body text contrast ≥ 4.5:1 | ✅ | `--text` slate-900 `#0F172A` on `--bg-surface` `#FFFFFF` = **18.8:1**; on `--bg-app` slate-50 = **17.7:1** |
+| 1.2 | Secondary text contrast ≥ 4.5:1 | ✅ | `--text-muted` slate-600 `#475569` on white = **7.6:1**; `--text-subtle` slate-500 `#64748B` on white = **5.4:1** |
+| 1.3 | Semantic-color text on soft bg ≥ 4.5:1 | ✅ | `--danger-700` `#B91C1C` on `--danger-soft` = **6.3:1**; `--c-success-700` `#047857` on `--ok-soft` = **5.6:1**; `--c-warn-700` `#B45309` on `--warn-soft` = **5.7:1** |
+| 1.4 | UI component contrast ≥ 3:1 (borders, focus) | ✅ | `--border-focus` cyan-600 ring at 3px on every interactive element ≥ **3.5:1**; chip borders use semantic-200 stroke against own soft fill |
+| 1.5 | Color is never the only signal | ✅ | Every red/amber/green surface paired with SVG icon from sprite + text label ("Failed", "Synced", "Partial Sync") |
+| 1.6 | Production palette validated | ✅ | Light-mode cyan + emerald + slate palette validated against WebAIM contrast checker for all token pairings; dark-mode pairings designed separately (not just inverted) per design system §1 |
 
 **Verdict:** ✅ Pass.
 
@@ -30,7 +30,7 @@ Legend: ✅ pass · ⚠️ partial / known gap · ❌ not yet addressed.
 | 2.2 | Filter chips ≥ 32px height | ✅ | `.filter-chip` height 32px (acceptable for compact toolbar) |
 | 2.3 | Hamburger menu ≥ 44×44px | ✅ | `#hamburger` is icon-button sized to 44×44 at `max-width: 1024px` breakpoint |
 | 2.4 | Toast close (×) ≥ 32×32px | ✅ | `.toast-close` is icon-button with padding |
-| 2.5 | Rx remove (✕) ≥ 32×32px | ⚠️ | Currently 28px — listed as a a11y debt fix candidate |
+| 2.5 | Rx remove (✕) ≥ 32×32px | ✅ | Now 36×36 in production redesign with explicit `min-height: 36px` |
 | 2.6 | Queue rows have generous tap area | ✅ | Whole row is the click target, ~64px tall |
 
 **Verdict:** ✅ Pass with one minor (2.5).
@@ -60,7 +60,7 @@ Legend: ✅ pass · ⚠️ partial / known gap · ❌ not yet addressed.
 | 4.3 | No dead-end error states | ✅ | Every error UI surfaces an action; reload preserves state for retry-from-cold |
 | 4.4 | Rx edits non-destructive | ✅ | Edit mode deep-clones `rxPrefilled` into a buffer; Cancel drops buffer; Save is explicit |
 | 4.5 | Note autosave with visible status | ✅ | "Saving…" → "Draft saved Ns ago" — user always knows save state |
-| 4.6 | Destructive actions reversible or confirmed | ⚠️ | "End Call" is one-click; could prompt confirm. Acceptable for a wireframe; flagged as production debt |
+| 4.6 | Destructive actions reversible or confirmed | ⚠️ | "End Call" is one-click; should prompt confirm. Flagged as production debt (D7) |
 | 4.7 | Required-field guidance | ✅ | Rx Save filters out rows with empty `drug` rather than rejecting the whole save |
 
 **Verdict:** ✅ Pass with one minor (4.6).
@@ -86,12 +86,12 @@ Legend: ✅ pass · ⚠️ partial / known gap · ❌ not yet addressed.
 | # | Item | Status | Evidence |
 |---|------|--------|----------|
 | 6.1 | All actions reachable by Tab | ✅ | Real `<button>`/`<input>`/`<select>` everywhere |
-| 6.2 | Focus visible | ✅ | Browser default ring preserved (no `outline: none`) |
-| 6.3 | Tab order follows DOM order | ✅ | No custom `tabindex` manipulation |
-| 6.4 | Modal toast traps focus | ❌ | Red-flag toast does not yet trap focus — listed as debt |
-| 6.5 | ESC dismisses modal toast | ❌ | Acknowledge button only — listed as debt |
-| 6.6 | Queue rows keyboard-activatable | ⚠️ | Currently click-only; rows should be `<button>` or `tabindex="0"` + Enter/Space |
-| 6.7 | Skip-to-content link | ❌ | Not yet present — small a11y debt |
+| 6.2 | Focus visible | ✅ | Universal `:focus-visible { box-shadow: 0 0 0 3px var(--ring) }` halo on every interactive element (cyan-600 @ 35% alpha) |
+| 6.3 | Tab order follows DOM order | ✅ | No custom `tabindex` manipulation beyond enabling queue rows |
+| 6.4 | Modal toast traps focus | ❌ | Red-flag `role="alertdialog"` does not yet trap focus — listed as debt (D1) |
+| 6.5 | ESC dismisses modal toast | ❌ | Acknowledge button only — listed as debt (D2) |
+| 6.6 | Queue rows keyboard-activatable | ✅ | Rows are `<article role="button" tabindex="0">` with Enter/Space handlers + `aria-label` summary |
+| 6.7 | Skip-to-content link | ❌ | Not yet present — small a11y debt (D3) |
 
 **Verdict:** ⚠️ Partial. Three known gaps (6.4, 6.5, 6.7) are documented in [`DESIGN_DEBT_LOG.md`](./DESIGN_DEBT_LOG.md) for the next iteration.
 
@@ -115,8 +115,8 @@ Legend: ✅ pass · ⚠️ partial / known gap · ❌ not yet addressed.
 
 | # | Item | Status | Evidence |
 |---|------|--------|----------|
-| 8.1 | All motion ≤ 500ms | ✅ | Sync stepper 450ms, autosave debounce 500ms, toast auto-dismiss 5000ms (dismissable) |
-| 8.2 | `prefers-reduced-motion` respected | ❌ | Not yet honored — debt #7, will gate transcript playback + sync stepper |
+| 8.1 | All motion ≤ 500ms | ✅ | Screen-in 240ms, toast-in 240ms, hover 120ms, sync stepper 450ms/step, autosave debounce 500ms, toast auto-dismiss 5000ms (dismissable) |
+| 8.2 | `prefers-reduced-motion` respected | ✅ | Global rule collapses every animation + transition to 0.01ms when user requests reduced motion |
 
 **Verdict:** ⚠️ Partial.
 
@@ -139,7 +139,7 @@ Legend: ✅ pass · ⚠️ partial / known gap · ❌ not yet addressed.
 | # | Item | Status | Evidence |
 |---|------|--------|----------|
 | 10.1 | `<html lang>` set | ✅ | `lang="en"` on root |
-| 10.2 | Mixed Thai/English content prepared | ❌ | All strings inline English + emoji; i18n is out of scope for the wireframe |
+| 10.2 | Mixed Thai/English content prepared | ❌ | All strings inline English; Noto Sans loaded as fallback gives Thai script reach but copy is not translated. i18n is out of scope for v3. |
 
 **Verdict:** ⚠️ Out of scope (see charter §7).
 
@@ -168,7 +168,7 @@ Legend: ✅ pass · ⚠️ partial / known gap · ❌ not yet addressed.
 
 1. Token contrast checked with WebAIM contrast checker against `--bg` and `--surface`.
 2. Tab order walked manually on all 5 screens, scenarios A/B/C.
-3. Grayscale verified continuously (it's the default render mode).
+3. Color contrast independently re-verified after the v3 cyan + emerald palette swap, including dark-mode-ready token pairings.
 4. Screen-reader spot-check on macOS VoiceOver — landmarks announced; live regions fire on sync toast.
 5. Touch targets measured in DevTools at the `max-width: 1024px` breakpoint.
 

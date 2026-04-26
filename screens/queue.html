@@ -1,16 +1,26 @@
 <section class="screen">
-  <div class="row space" style="margin-bottom:8px">
-    <h2 id="q-title">Queue</h2>
-    <div><button aria-label="Search">🔍</button></div>
+  <div class="page-header">
+    <div>
+      <h1 id="q-title">Queue</h1>
+      <div class="meta" id="q-subtitle">Tap a patient to open their summary.</div>
+    </div>
+    <div class="actions">
+      <button class="ghost" aria-label="Search">
+        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+        Search
+      </button>
+    </div>
   </div>
-  <div class="filter-row" id="q-filters">
-    <button class="filter-chip active" data-filter="all">All <span class="count"></span></button>
-    <button class="filter-chip" data-filter="waiting">Waiting <span class="count"></span></button>
-    <button class="filter-chip" data-filter="urgent">Urgent <span class="count"></span></button>
-    <button class="filter-chip" data-filter="labPending">Lab pending <span class="count"></span></button>
+
+  <div class="filter-row" id="q-filters" role="tablist" aria-label="Queue filters">
+    <button class="filter-chip active" data-filter="all" role="tab">All <span class="count"></span></button>
+    <button class="filter-chip" data-filter="waiting" role="tab">Waiting <span class="count"></span></button>
+    <button class="filter-chip" data-filter="urgent" role="tab">Urgent <span class="count"></span></button>
+    <button class="filter-chip" data-filter="labPending" role="tab">Lab pending <span class="count"></span></button>
     <label class="show-done-toggle">
       <input type="checkbox" id="q-show-done" /> Show done
     </label>
   </div>
+
   <div id="queue-list"></div>
 </section>

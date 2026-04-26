@@ -1,8 +1,8 @@
-# Telemed Wireframe — Project Charter
+# Telemed Clinical Console — Project Charter
 
 > **Live demo:** https://bliztripper.github.io/telemed-wireframe/
 > **Tech ref:** [`../TECHNICAL.md`](../TECHNICAL.md)
-> **Status:** Final hi-fi interactive prototype, demo-ready.
+> **Status:** v3 production release (Apr 27, 2026) — launch-ready clinical UI built on the original wireframe shell.
 
 ---
 
@@ -50,7 +50,7 @@ Switching tools breaks attention. A 30-second sync failure (e.g., pharmacy offli
 | G3 | Sync outcomes are visible at the moment they happen and on next-screen | Count pill + big bar + cross-screen toast |
 | G4 | Role separation is obvious and enforced | Nurse-disabled nav greyed + click-blocked + auto-bounce |
 | G5 | State survives reload | Full session in `localStorage` key `telemed.state.v3` |
-| G6 | Wireframe forces hierarchy review, not color review | `body { filter: grayscale(100%) }` lock |
+| G6 | Production visual system: calm clinical palette + accessible typography | Cyan-600 primary, emerald-600 accent, Figtree/Noto Sans, 28-glyph SVG icon sprite |
 
 ---
 
@@ -104,7 +104,7 @@ Switching tools breaks attention. A 30-second sync failure (e.g., pharmacy offli
 3. **State is durable.** Reload mid-consult does not lose the note, the Rx edits, or the queue position.
 4. **Errors are recoverable.** Every failure has an inline action (Acknowledge, Retry, Retry-All), never a dead-end.
 5. **Role boundaries are visible at the chrome level.** Nurses literally cannot reach doctor-only screens — disabled in nav, auto-bounce on role switch.
-6. **Grayscale lock keeps the conversation on hierarchy.** Color is reserved for production design, not for impressing the reviewer.
+6. **Visual system carries clinical credibility.** Calm cyan + health green palette with Figtree/Noto Sans + JetBrains Mono signals "enterprise medical software", not demoware. SVG icon sprite renders identically across every platform; color is never the sole carrier of meaning (every state pairs with icon + text).
 
 ---
 

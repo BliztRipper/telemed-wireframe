@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Patient A: Somchai, 58 year old man on a video call from his living room">
+  <defs>
+    <linearGradient id="aBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D9E7EE"/>
+      <stop offset="1" stop-color="#A9C2D2"/>
+    </linearGradient>
+    <linearGradient id="aSkin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E8B98A"/>
+      <stop offset="1" stop-color="#C99367"/>
+    </linearGradient>
+    <linearGradient id="aShirt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1F3A5F"/>
+      <stop offset="1" stop-color="#13243C"/>
+    </linearGradient>
+    <radialGradient id="aGlow" cx="0.5" cy="0.45" r="0.6">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Room background -->
+  <rect width="800" height="450" fill="url(#aBg)"/>
+  <!-- Window frame on left -->
+  <rect x="60" y="50" width="180" height="220" rx="6" fill="#F4F8FC" opacity="0.7"/>
+  <line x1="150" y1="50" x2="150" y2="270" stroke="#A9C2D2" stroke-width="3"/>
+  <line x1="60" y1="160" x2="240" y2="160" stroke="#A9C2D2" stroke-width="3"/>
+  <!-- Picture frame on right -->
+  <rect x="600" y="80" width="120" height="90" rx="4" fill="#FFFFFF" stroke="#9AB3C2" stroke-width="3"/>
+  <rect x="612" y="92" width="96" height="66" fill="#7FB6D6" opacity="0.55"/>
+  <!-- Couch back -->
+  <rect x="0" y="320" width="800" height="130" fill="#9DBBC9"/>
+  <ellipse cx="400" cy="320" rx="500" ry="22" fill="#7FA0B0" opacity="0.4"/>
+  <!-- Soft glow -->
+  <rect width="800" height="450" fill="url(#aGlow)"/>
+
+  <!-- Person -->
+  <!-- Shoulders / shirt -->
+  <path d="M180 450 C 200 360, 280 320, 400 320 C 520 320, 600 360, 620 450 Z" fill="url(#aShirt)"/>
+  <!-- Collar -->
+  <path d="M345 340 L400 372 L455 340 L455 360 L400 392 L345 360 Z" fill="#0D1A2C"/>
+  <!-- Neck -->
+  <path d="M370 290 Q400 320 430 290 L430 330 Q400 345 370 330 Z" fill="url(#aSkin)"/>
+  <!-- Head -->
+  <ellipse cx="400" cy="220" rx="92" ry="105" fill="url(#aSkin)"/>
+  <!-- Ears -->
+  <ellipse cx="312" cy="225" rx="14" ry="22" fill="#B6814F"/>
+  <ellipse cx="488" cy="225" rx="14" ry="22" fill="#B6814F"/>
+  <!-- Hair: short greying -->
+  <path d="M310 175 Q 330 110, 400 105 Q 470 110, 490 175 Q 480 145, 400 142 Q 320 145, 310 175 Z" fill="#3A3A3A"/>
+  <path d="M315 175 Q 340 130, 400 130 Q 460 130, 485 175 Q 460 152, 400 152 Q 340 152, 315 175 Z" fill="#7B7B7B" opacity="0.55"/>
+  <!-- Eyebrows -->
+  <path d="M348 200 Q360 192, 380 200" stroke="#2B2B2B" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M420 200 Q440 192, 452 200" stroke="#2B2B2B" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <!-- Eyes -->
+  <ellipse cx="365" cy="218" rx="6.5" ry="4.5" fill="#1A1A1A"/>
+  <ellipse cx="435" cy="218" rx="6.5" ry="4.5" fill="#1A1A1A"/>
+  <circle cx="367" cy="216.5" r="1.6" fill="#FFFFFF"/>
+  <circle cx="437" cy="216.5" r="1.6" fill="#FFFFFF"/>
+  <!-- Nose -->
+  <path d="M398 232 Q 392 258, 400 268 Q 408 258, 402 232" stroke="#9C6840" stroke-width="2" fill="none"/>
+  <!-- Mouth: subtle smile -->
+  <path d="M375 285 Q 400 298, 425 285" stroke="#7A3F2A" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M380 285 Q 400 292, 420 285" fill="#C97562" opacity="0.6"/>
+  <!-- Cheek warmth -->
+  <ellipse cx="346" cy="252" rx="14" ry="8" fill="#E68A6F" opacity="0.25"/>
+  <ellipse cx="454" cy="252" rx="14" ry="8" fill="#E68A6F" opacity="0.25"/>
+</svg>
