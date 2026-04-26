@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Telemed Wireframe — Final Demo</title>
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --border: #E0E0E0;
+    --text: #1A1A1A;
+    --text-2: #666666;
+    --accent: #333333;
+    --flag: #D32F2F;
+    --ok: #2E7D32;
+    --warn: #F9A825;
+    --radius: 6px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: var(--surface);
+    -webkit-font-smoothing: antialiased;
+  }
+  .deck { max-width: 980px; margin: 0 auto; padding: 24px; }
+  .slide {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 40px;
+    margin: 24px 0;
+    page-break-after: always;
+    scroll-margin-top: 24px;
+  }
+  .slide h1 { font-size: 28px; line-height: 1.25; margin: 0 0 8px; }
+  .slide h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-2); margin: 0 0 24px; font-weight: 600; }
+  .slide h3 { font-size: 18px; margin: 24px 0 8px; }
+  .slide p { margin: 0 0 12px; }
+  .slide ul, .slide ol { margin: 0 0 12px; padding-left: 22px; }
+  .slide li { margin-bottom: 6px; }
+  .lead { font-size: 20px; line-height: 1.4; color: var(--text); }
+  .kicker { display: inline-block; font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-2); padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; margin-bottom: 16px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .card.flag { border-left: 4px solid var(--flag); }
+  .card.ok { border-left: 4px solid var(--ok); }
+  .card.warn { border-left: 4px solid var(--warn); }
+  .card h4 { margin: 0 0 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-2); }
+  .shot {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+    margin: 16px 0;
+  }
+  .shot img { display: block; width: 100%; height: auto; }
+  .shot figcaption { padding: 10px 14px; font-size: 13px; color: var(--text-2); border-top: 1px solid var(--border); background: var(--bg); }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  th { font-weight: 600; color: var(--text-2); }
+  code { font: 13px/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: var(--surface); padding: 1px 6px; border-radius: 4px; }
+  .nav { position: sticky; top: 0; background: var(--surface); padding: 8px 0; border-bottom: 1px solid var(--border); z-index: 10; margin-bottom: 24px; }
+  .nav a { display: inline-block; margin-right: 12px; font-size: 13px; color: var(--text-2); text-decoration: none; }
+  .nav a:hover { color: var(--text); }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; border: 1px solid var(--border); }
+  .pill.ok { color: var(--ok); border-color: var(--ok); }
+  .pill.flag { color: var(--flag); border-color: var(--flag); }
+  .pill.warn { color: var(--warn); border-color: var(--warn); }
+  .demo-step { padding: 12px 16px; border-left: 3px solid var(--border); background: var(--surface); margin: 8px 0; border-radius: 0 var(--radius) var(--radius) 0; }
+  .demo-step strong { color: var(--text); }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
+  footer { text-align: center; color: var(--text-2); font-size: 12px; padding: 32px 0 48px; }
+  @media print {
+    body { background: white; }
+    .nav { display: none; }
+    .slide { box-shadow: none; border: 0; padding: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <nav class="nav">
+    <a href="#s1">1 Problem</a>
+    <a href="#s2">2 User</a>
+    <a href="#s3">3 Insight</a>
+    <a href="#s4">4 Solution</a>
+    <a href="#s5">5 Flow</a>
+    <a href="#s6">6 Demo</a>
+    <a href="#s7">7 Why</a>
+    <a href="#s8">8 Learnings</a>
+    <a href="#s9">9 Deliverables</a>
+  </nav>
+
+  <section id="s1" class="slide">
+    <span class="kicker">Slide 1 · 0:45</span>
+    <h2>Problem</h2>
+    <h1>Five tools, seven minutes, one patient.</h1>
+    <p class="lead">Thai public-hospital telemed consults run on five disconnected systems — video, EMR, lab viewer, e-prescribing, and the NHSO claim system. Tool-switching is where mistakes are born.</p>
+    <div class="grid-2">
+      <div class="card flag">
+        <h4>Pain points</h4>
+        <ul>
+          <li>Red flags surface late, after the SOAP note is half-written.</li>
+          <li>Sync failures (pharmacy, NHSO) appear minutes after discharge.</li>
+          <li>Same UI for nurse triage and doctor consult — role-confusion errors.</li>
+          <li>No audit trail of "what got synced when".</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Cost</h4>
+        <ul>
+          <li>Longer consult, missed clinical cues.</li>
+          <li>Re-triage / re-route after the patient has left.</li>
+          <li>Manual phone follow-up to fix downstream errors.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="s2" class="slide">
+    <span class="kicker">Slide 2 · 0:30</span>
+    <h2>Target user</h2>
+    <h1>Two people. One software. Very different jobs.</h1>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Primary — Dr. Somchai</h4>
+        <p>Consulting physician. 30+ telemed consults per shift. Needs everything for a single patient on one surface, plus obvious confirmation that the chart, Rx, and claim actually landed.</p>
+      </div>
+      <div class="card">
+        <h4>Secondary — Nurse Malee</h4>
+        <p>Triage / pre-consult. Reviews queue, captures vitals, flags red cases. Does <strong>not</strong> prescribe or sign off. Needs a guarded view that prevents her from accidentally entering doctor-only flows.</p>
+      </div>
+    </div>
+    <p style="margin-top: 16px; color: var(--text-2);">Out of scope: patient-facing app, billing clerks, pharmacist UI.</p>
+  </section>
+
+  <section id="s3" class="slide">
+    <span class="kicker">Slide 3 · 0:30</span>
+    <h2>Insight</h2>
+    <h1>One screen per phase. Every handoff visible at the moment it happens.</h1>
+    <p class="lead">We don't need a new EMR. We need <strong>one screen per phase of the consult</strong>, and every cross-system handoff — every red flag, every Rx change, every NHSO push — has to be <strong>visible the moment it happens</strong> and <strong>still visible on the next screen</strong> if the doctor moves on.</p>
+    <div class="card ok" style="margin-top: 24px;">
+      <h4>Anchor</h4>
+      <p style="margin: 0; font-size: 18px;"><em>Every error has an inline action. No dead-ends.</em></p>
+    </div>
+  </section>
+
+  <section id="s4" class="slide">
+    <span class="kicker">Slide 4 · 0:45</span>
+    <h2>Solution</h2>
+    <h1>Five screens. One consult. State persists across reload.</h1>
+    <p>Queue → Summary → Video → Assessment → Sync. Roles enforced in the chrome (sidebar disables doctor-only screens for nurses, auto-bounces on switch). Color is reserved for production — the prototype is grayscale-locked so reviewers focus on hierarchy and flow.</p>
+    <figure class="shot">
+      <img src="screenshots/01-queue-scenario-a.png" alt="Queue screen with 3 scenarios sorted red-flag-first">
+      <figcaption>Queue · sorted red-flag first · "Recommended next ★" pill on top live row · filter chips with counts</figcaption>
+    </figure>
+  </section>
+
+  <section id="s5" class="slide">
+    <span class="kicker">Slide 5 · 0:30</span>
+    <h2>Core user flow</h2>
+    <h1>Start → main action → decision point → completion.</h1>
+    <table>
+      <thead><tr><th>Step</th><th>Start</th><th>Main action</th><th>Decision</th><th>Completion</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Queue</td><td>Pick patient</td><td>Red flag? Lab pending?</td><td>Row outline = active</td></tr>
+        <tr><td>2</td><td>Summary</td><td>Read vitals/labs/meds</td><td>Acknowledge red flag</td><td>"Start Video" enabled</td></tr>
+        <tr><td>3</td><td>Video</td><td>Run consult, autosave note</td><td>Red band visible</td><td>"Save & Continue →"</td></tr>
+        <tr><td>4</td><td>Assessment</td><td>Edit Rx, set referral</td><td>ER yes/no, interactions</td><td>"Save & Sync →"</td></tr>
+        <tr><td>5</td><td>Sync</td><td>Watch each system</td><td>Failure? Retry inline</td><td>Cross-screen toast on Summary</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="s6" class="slide">
+    <span class="kicker">Slide 6 · 3:00</span>
+    <h2>Live demo · 3 scenarios</h2>
+    <h1>Happy path → red flag → sync failure recovery.</h1>
+
+    <h3><span class="pill">A</span> Stable patient</h3>
+    <p>Click Somchai K. — vitals normal, all 4 sync slots green, big bar "✅ Sync Complete".</p>
+    <figure class="shot">
+      <img src="screenshots/02-summary-scenario-a.png" alt="Summary scenario A">
+      <figcaption>Summary · Scenario A · stable T2DM follow-up · vitals/labs clean</figcaption>
+    </figure>
+
+    <h3><span class="pill flag">B</span> Red-flag (suspected ACS)</h3>
+    <p>Switch scenario B — modal red-flag toast appears immediately. HR 128 · SpO2 89% · Troponin 0.8↑. Must <strong>Acknowledge</strong> before moving on. Assessment opens with ER pre-checked, dept = Cardiology.</p>
+    <figure class="shot">
+      <img src="screenshots/03-summary-redflag-toast.png" alt="Summary with red-flag alertdialog toast">
+      <figcaption>Summary · Scenario B · role="alertdialog" toast · sparkline lab trends · header chip "1 red-flag"</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="screenshots/04-video-scenario-b.png" alt="Video screen with red flag acknowledged band">
+      <figcaption>Video · Scenario B · red-flag-acknowledged band · live AI transcript · auto-saving note</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="screenshots/05-assessment-rx-edit.png" alt="Assessment with Rx in edit mode">
+      <figcaption>Assessment · Scenario B · Rx in edit mode · ER pre-checked · Cardiology follow-up</figcaption>
+    </figure>
+
+    <h3><span class="pill warn">C</span> Sync failure (centerpiece)</h3>
+    <p>Switch scenario C, jump to Sync. Pharmacy fails with <code>ERR-503 · pharmacy offline</code>. Big bar flips to "⚠️ Partial Sync Failure · 1 of 4 failed". Click <strong>🔁 Retry All Failed</strong>. Pharmacy goes "retrying…" → green. Bar flips to "✅ Sync Complete". Nav back to Summary — sync-success toast surfaces, one-shot, scenario-scoped.</p>
+    <figure class="shot">
+      <img src="screenshots/06-sync-failure-c.png" alt="Sync screen showing pharmacy failure">
+      <figcaption>Sync · Scenario C · ERR-503 + per-row Retry + Retry All Failed · count pill 3/4</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="screenshots/07-sync-after-retry.png" alt="Sync screen all green after retry">
+      <figcaption>Sync · after Retry-All · 4/4 synced · "✅ Sync Complete"</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="screenshots/08-summary-sync-toast.png" alt="Summary screen after sync">
+      <figcaption>Summary · scenario-scoped state visible after returning from Sync</figcaption>
+    </figure>
+
+    <h3><span class="pill">Role</span> Nurse view</h3>
+    <p>Switch role to Nurse — identity chip swaps, doctor-only screens (Video, Assess, Sync) greyed out. Nav-clicks are blocked at JS + CSS level. Auto-bounce to Queue if currently on a doctor-only screen.</p>
+    <figure class="shot">
+      <img src="screenshots/09-nurse-role-queue.png" alt="Queue screen as nurse role">
+      <figcaption>Queue · Nurse role · doctor-only nav items disabled · title prefix "Triage Queue"</figcaption>
+    </figure>
+  </section>
+
+  <section id="s7" class="slide">
+    <span class="kicker">Slide 7 · 0:45</span>
+    <h2>Why it works</h2>
+    <h1>Three things, no more.</h1>
+    <ol>
+      <li><strong>One screen per phase.</strong> Information density tuned per surface — Summary scans, Video listens, Assessment composes, Sync audits.</li>
+      <li><strong>No dead-ends.</strong> Every error state has an inline action: Acknowledge / Retry / Retry-All / Cancel-edit. The user is never stranded.</li>
+      <li><strong>Honest about what isn't there yet.</strong> Eight known a11y / motion gaps are tracked in <code>DESIGN_DEBT_LOG.md</code>, not hidden. AA-oriented; full certification is a production milestone.</li>
+    </ol>
+  </section>
+
+  <section id="s8" class="slide">
+    <span class="kicker">Slide 8 · 0:45</span>
+    <h2>Key learnings</h2>
+    <h1>What this build taught us.</h1>
+    <ol>
+      <li><strong>Color is for production. Hierarchy is for review.</strong> The grayscale lock surfaced layout problems in week 1 instead of week 5.</li>
+      <li><strong>State persistence is a UX feature, not a backend feature.</strong> Putting the entire session in <code>localStorage</code> stopped mid-consult reload from breaking the demo.</li>
+      <li><strong>A field that doesn't earn its pixel cost should be deleted, not faked.</strong> AI Risk got cut from the render the moment we couldn't say what action it drove.</li>
+      <li><strong>Sync visibility is the most important micro-feature in this app.</strong> Count pill + big bar + cross-screen toast is the single thing operators ask about. We got it right last and it changed the whole pitch.</li>
+    </ol>
+  </section>
+
+  <section id="s9" class="slide">
+    <span class="kicker">Slide 9 · 0:10</span>
+    <h2>Deliverables index</h2>
+    <h1>Where everything lives.</h1>
+    <table>
+      <thead><tr><th>Deliverable</th><th>File</th></tr></thead>
+      <tbody>
+        <tr><td>A · Design system snapshot</td><td><code>docs/DESIGN_SYSTEM.md</code></td></tr>
+        <tr><td>B · Accessibility checklist</td><td><code>docs/ACCESSIBILITY_CHECKLIST.md</code></td></tr>
+        <tr><td>C · Design debt log</td><td><code>docs/DESIGN_DEBT_LOG.md</code></td></tr>
+        <tr><td>Project charter</td><td><code>docs/PROJECT_CHARTER.md</code></td></tr>
+        <tr><td>Pitch script</td><td><code>docs/PRESENTATION_NARRATIVE.md</code></td></tr>
+        <tr><td>Technical spec</td><td><code>TECHNICAL.md</code></td></tr>
+        <tr><td>Live prototype</td><td><a href="https://bliztripper.github.io/telemed-wireframe/">bliztripper.github.io/telemed-wireframe</a></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    Telemed Wireframe · Final demo · 2026-04-26
+  </footer>
+
+</div>
+</body>
+</html>
