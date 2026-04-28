@@ -60,6 +60,17 @@ function wireUp() {
   });
   const hamb = document.getElementById('hamburger');
   hamb.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
+
+  const resetBtn = document.getElementById('btn-reset-demo');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      const ok = confirm('Reset demo? This clears local storage and restarts the journey.');
+      if (!ok) return;
+      try { localStorage.clear(); } catch {}
+      location.reload();
+    });
+  }
+
   renderIdentityChip(state.role);
   loadFragment(state.screen || 'queue');
 }
