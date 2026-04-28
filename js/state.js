@@ -78,6 +78,14 @@ export function getNoteSavedAt(hn) { return state.noteSavedAt[hn] || null; }
 export function setMaxStep(step) {
   if (step > state.maxStep) { state.maxStep = step; save(); }
 }
+export function resetWorkflow() {
+  state.maxStep = 1;
+  state.redFlagAcknowledged = false;
+  state.rxEditMode = {};
+  state.rxEdits = {};
+  state.lastSyncOutcome = null;
+  save();
+}
 export function markDone(id) {
   if (!state.doneIds.includes(id)) state.doneIds = [...state.doneIds, id];
   save();

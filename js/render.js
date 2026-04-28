@@ -1,5 +1,5 @@
 import { scenarios, identity } from './scenarios.js';
-import { state, activeScenario, setScenario, setQueueFilter, setShowDone, isDone, markDone, getNote, setNote, getNoteSavedAt, getNoteJoined, setLastSyncOutcome, clearLastSyncOutcome, setRxEditMode, setRxEdits, clearRxEdits, getRxRows } from './state.js';
+import { state, activeScenario, setScenario, setQueueFilter, setShowDone, isDone, markDone, getNote, setNote, getNoteSavedAt, getNoteJoined, setLastSyncOutcome, clearLastSyncOutcome, setRxEditMode, setRxEdits, clearRxEdits, getRxRows, resetWorkflow } from './state.js';
 import { mount } from './dom.js';
 import { showRedFlagToast, sparkline, playTranscript, stopTranscript, showFeedbackToast } from './interactions.js';
 
@@ -763,6 +763,7 @@ function renderSync() {
   step();
 
   document.getElementById('btn-back').addEventListener('click', () => {
+    resetWorkflow();
     window.__loadFragment('queue');
   });
 }
