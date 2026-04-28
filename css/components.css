@@ -230,6 +230,35 @@ button.sm {
   cursor: not-allowed;
   pointer-events: none;
 }
+.nav-item.locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: transparent;
+  position: relative;
+}
+.nav-item.locked:hover { background: transparent; color: var(--text-muted); }
+.nav-item.locked .nav-step {
+  background: var(--bg-inset);
+  color: var(--text-subtle);
+  border: 1px dashed var(--border-strong);
+}
+.nav-item.locked::after {
+  content: '🔒';
+  margin-left: auto;
+  font-size: 11px;
+  opacity: 0.7;
+}
+.nav-item.done .nav-step {
+  background: var(--ok);
+  color: #fff;
+}
+.nav-item.done::after {
+  content: '✓';
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--c-success-700);
+  font-weight: var(--fw-bold);
+}
 
 .scenario-picker {
   margin-top: auto;
@@ -691,7 +720,7 @@ details.card > *:not(summary) { padding: var(--sp-4) var(--sp-5); }
 }
 .med-list li .icon { color: var(--primary); }
 .med-list .med-name { font-weight: var(--fw-semi); color: var(--text-strong); }
-.med-list .med-dose { color: var(--text-muted); margin-left: auto; font-family: var(--font-mono); font-size: var(--fs-xs); }
+.med-list .med-dose { color: var(--text-muted); font-family: var(--font-mono); font-size: var(--fs-xs); white-space: nowrap; }
 
 /* ============================================================
    TOASTS (red flag, sync outcome)
@@ -983,6 +1012,59 @@ button.retry {
 .note-timestamp.unsaved { color: var(--c-warn-700); }
 .note-actions { display: flex; justify-content: flex-end; }
 
+/* structured consult-note fields */
+.note-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+.note-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.note-field-label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semi);
+  color: var(--text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.note-field textarea {
+  width: 100%;
+  min-height: 96px;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  resize: vertical;
+}
+@media (max-width: 768px) {
+  .note-fields-grid { grid-template-columns: 1fr; }
+}
+
+.vid-cc-text {
+  font-size: var(--fs-base);
+  color: var(--text-strong);
+  font-weight: var(--fw-medium);
+  font-style: italic;
+}
+
+/* call-ended layout: hide video stage, expand documentation */
+.split-50.call-ended {
+  grid-template-columns: 1fr;
+  height: auto;
+}
+.split-50.call-ended .video-stage { display: none; }
+.split-50.call-ended .video-side {
+  overflow: visible;
+  padding-right: 0;
+}
+.split-50.call-ended .note-fields-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.split-50.call-ended .note-field textarea { min-height: 140px; }
+.split-50.call-ended .transcript-card { opacity: 0.85; }
+
+/* transcript card moved to bottom — keep it visually subordinate */
+.transcript-card { order: 99; }
+
 /* ============================================================
    ASSESSMENT SCREEN
    ============================================================ */
@@ -1087,10 +1169,66 @@ label.er-toggle {
 }
 label.er-toggle input { width: auto; min-height: 0; accent-color: var(--danger); }
 
+/* diagnosis (ICD-10) */
+.dx-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.dx-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+.dx-row .dx-rank {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-sm);
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-xs);
+}
+.dx-row .dx-text {
+  flex: 1;
+  color: var(--text-strong);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+}
+.dx-row .dx-del {
+  width: 28px;
+  height: 28px;
+  min-height: 28px;
+  padding: 0;
+  color: var(--danger);
+}
+.dx-search-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+.dx-search-row input { flex: 1; min-width: 200px; }
+
+/* management text */
+.mgmt-text {
+  width: 100%;
+  min-height: 96px;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  resize: vertical;
+}
+
 /* ============================================================
    SUMMARY SCREEN extras
    ============================================================ */
-#sum-toast-mount, #toast-mount {
+#sum-toast-mount, #toast-mount, #vid-feedback-mount, #as-feedback-mount {
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);

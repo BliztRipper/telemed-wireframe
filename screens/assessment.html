@@ -16,6 +16,8 @@
     </div>
   </div>
 
+  <div id="as-feedback-mount"></div>
+
   <div class="card note-ref-card" id="as-note-ref" style="display:none">
     <h3><svg class="icon" aria-hidden="true"><use href="#i-edit"/></svg> Consult note (from video call)</h3>
     <pre id="as-note-body"></pre>
@@ -34,6 +36,43 @@
       <button id="btn-accept" class="success">
         <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
         Accept
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <h3><svg class="icon" aria-hidden="true"><use href="#i-clipboard"/></svg> Diagnosis (ICD-10)
+        <span class="chip info" style="margin-left:4px">Required first</span>
+      </h3>
+      <button id="btn-add-dx">
+        <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>
+        Add diagnosis
+      </button>
+    </div>
+    <div id="as-dx" class="dx-list"></div>
+    <label class="dx-search-row">
+      <span class="muted" style="font-size:var(--fs-sm)">Search ICD-10:</span>
+      <input id="as-dx-input" type="search" placeholder="e.g. E11.9 Type 2 diabetes mellitus" />
+    </label>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <h3><svg class="icon" aria-hidden="true"><use href="#i-mic"/></svg> Management
+        <span class="chip info" style="margin-left:4px">Nurse · Pharmacist</span>
+      </h3>
+      <select id="as-mgmt-target" style="max-width:200px">
+        <option value="nurse">To: Nurse</option>
+        <option value="pharmacist">To: Pharmacist</option>
+        <option value="both">To: Nurse + Pharmacist</option>
+      </select>
+    </div>
+    <textarea id="as-mgmt-text" class="mgmt-text" placeholder="Care instructions, monitoring, dispensing notes…"></textarea>
+    <div class="row" style="justify-content:flex-end">
+      <button id="btn-mgmt-send" class="primary">
+        <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+        Send message
       </button>
     </div>
   </div>
@@ -98,10 +137,6 @@
   <details class="card">
     <summary>Long-form Note</summary>
     <textarea style="min-height:120px"></textarea>
-  </details>
-  <details class="card">
-    <summary>ICD-10 Coding</summary>
-    <input type="search" placeholder="Search codes..." />
   </details>
   <details class="card">
     <summary>Retrospective Trend Views</summary>

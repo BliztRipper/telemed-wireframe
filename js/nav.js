@@ -1,11 +1,11 @@
-import { state, setScenario, setScreen, setRole, activeScenario } from './state.js';
+import { state, setScenario, setScreen, setRole, activeScenario, SCREEN_STEP } from './state.js';
 import { renderScreen, renderIdentityChip } from './render.js';
 import { mount } from './dom.js';
 
 const SCREENS = ['queue', 'summary', 'video', 'assessment', 'sync'];
 const NURSE_DISABLED = new Set(['video', 'assessment', 'sync']);
 
-async function loadFragment(name) {
+export async function loadFragment(name) {
   const res = await fetch(`screens/${name}.html`);
   const html = await res.text();
   mount(document.getElementById('main'), html);
@@ -13,12 +13,21 @@ async function loadFragment(name) {
   refreshNav();
   renderScreen(name);
 }
+window.__loadFragment = loadFragment;
 
 function refreshNav() {
   document.querySelectorAll('.nav-item').forEach(el => {
     const scr = el.dataset.screen;
+    const step = SCREEN_STEP[scr] || 1;
+    const nurseLocked = state.role === 'nurse' && NURSE_DISABLED.has(scr);
+    const stepLocked = step > state.maxStep;
     el.classList.toggle('active', scr === state.screen);
-    el.classList.toggle('disabled', state.role === 'nurse' && NURSE_DISABLED.has(scr));
+    el.classList.toggle('disabled', nurseLocked);
+    el.classList.toggle('locked', stepLocked && !nurseLocked);
+    el.classList.toggle('done', step < state.maxStep && !nurseLocked);
+    if (stepLocked) el.setAttribute('aria-disabled', 'true');
+    else el.removeAttribute('aria-disabled');
+    el.title = stepLocked ? `Step ${step} unlocks after step ${state.maxStep} is reached.` : '';
   });
   const fc = document.getElementById('flag-count');
   const count = activeScenario().redFlags.length > 0 ? 1 : 0;
@@ -30,6 +39,7 @@ function wireUp() {
   document.querySelectorAll('.nav-item').forEach(el => {
     el.addEventListener('click', () => {
       if (el.classList.contains('disabled')) return;
+      if (el.classList.contains('locked')) return;
       loadFragment(el.dataset.screen);
     });
   });

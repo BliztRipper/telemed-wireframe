@@ -1,6 +1,10 @@
 import { scenarios } from './scenarios.js';
 
-const KEY = 'telemed.state.v3';
+const KEY = 'telemed.state.v4';
+export const SCREEN_STEP = { queue: 1, summary: 2, video: 3, assessment: 4, sync: 5 };
+const NOTE_FIELDS = ['pi', 'ph', 'pe', 'pl'];
+const blankNote = () => ({ pi: '', ph: '', pe: '', pl: '' });
+
 const defaults = {
   scenarioId: 'A',
   screen: 'queue',
@@ -13,11 +17,27 @@ const defaults = {
   doneIds: ['D', 'E'],
   lastSyncOutcome: null,
   rxEditMode: {},
-  rxEdits: {}
+  rxEdits: {},
+  maxStep: 1
 };
 
+function migrateNotes(rawNotes) {
+  if (!rawNotes || typeof rawNotes !== 'object') return {};
+  const out = {};
+  for (const [hn, val] of Object.entries(rawNotes)) {
+    if (typeof val === 'string') out[hn] = { ...blankNote(), pi: val };
+    else if (val && typeof val === 'object') out[hn] = { ...blankNote(), ...val };
+  }
+  return out;
+}
+
 function load() {
-  try { return { ...defaults, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; }
+  try {
+    const raw = JSON.parse(localStorage.getItem(KEY) || '{}');
+    const merged = { ...defaults, ...raw };
+    merged.notes = migrateNotes(merged.notes);
+    return merged;
+  }
   catch { return { ...defaults }; }
 }
 
@@ -28,18 +48,36 @@ export function setScenario(id) {
   state.redFlagAcknowledged = false;
   state.rxEditMode = {};
   state.rxEdits = {};
+  state.maxStep = 1;
   save();
 }
-export function setScreen(screen) { state.screen = screen; save(); }
+export function setScreen(screen) {
+  state.screen = screen;
+  const step = SCREEN_STEP[screen] || 1;
+  if (step > state.maxStep) state.maxStep = step;
+  save();
+}
 export function setRole(role)     { state.role = role; save(); }
 export function activeScenario()  { return scenarios[state.scenarioId]; }
-export function setNote(hn, text) {
-  state.notes = { ...state.notes, [hn]: text };
+export function setNote(hn, fields) {
+  const cur = state.notes[hn] || blankNote();
+  state.notes = { ...state.notes, [hn]: { ...cur, ...fields } };
   state.noteSavedAt = { ...state.noteSavedAt, [hn]: new Date().toISOString() };
   save();
 }
-export function getNote(hn) { return state.notes[hn] || ''; }
+export function getNote(hn) { return state.notes[hn] || blankNote(); }
+export function getNoteJoined(hn) {
+  const n = getNote(hn);
+  const labels = { pi: 'Present Illness', ph: 'Past History', pe: 'Physical Exam', pl: 'Plan' };
+  return NOTE_FIELDS
+    .filter(k => (n[k] || '').trim())
+    .map(k => `${labels[k]}: ${n[k].trim()}`)
+    .join('\n');
+}
 export function getNoteSavedAt(hn) { return state.noteSavedAt[hn] || null; }
+export function setMaxStep(step) {
+  if (step > state.maxStep) { state.maxStep = step; save(); }
+}
 export function markDone(id) {
   if (!state.doneIds.includes(id)) state.doneIds = [...state.doneIds, id];
   save();

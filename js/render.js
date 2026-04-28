@@ -1,7 +1,7 @@
 import { scenarios, identity } from './scenarios.js';
-import { state, activeScenario, setScenario, setQueueFilter, setShowDone, isDone, markDone, getNote, setNote, getNoteSavedAt, setLastSyncOutcome, clearLastSyncOutcome, setRxEditMode, setRxEdits, clearRxEdits, getRxRows } from './state.js';
+import { state, activeScenario, setScenario, setQueueFilter, setShowDone, isDone, markDone, getNote, setNote, getNoteSavedAt, getNoteJoined, setLastSyncOutcome, clearLastSyncOutcome, setRxEditMode, setRxEdits, clearRxEdits, getRxRows } from './state.js';
 import { mount } from './dom.js';
-import { showRedFlagToast, sparkline, playTranscript, stopTranscript } from './interactions.js';
+import { showRedFlagToast, sparkline, playTranscript, stopTranscript, showFeedbackToast } from './interactions.js';
 
 const ICON = (id, cls = 'icon') =>
   `<svg class="${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
@@ -224,7 +224,7 @@ function renderQueue() {
   list.querySelectorAll('.queue-row:not(.done)').forEach(el => {
     const open = () => {
       setScenario(el.dataset.scenario);
-      document.querySelector('[data-screen="summary"]').click();
+      window.__loadFragment('summary');
     };
     el.addEventListener('click', open);
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
@@ -306,7 +306,7 @@ function renderSummary() {
     mount(videoBtn, `${ICON('clock')} <span>Consult pending — doctor review</span>`);
   } else {
     videoBtn.addEventListener('click', () => {
-      document.querySelector('[data-screen="video"]').click();
+      window.__loadFragment('video');
     });
   }
 }
@@ -316,6 +316,8 @@ function renderVideo() {
   if (!document.getElementById('vid-identity')) return;
   const p = s.patient;
   document.getElementById('vid-identity').textContent = `${p.name} · HN ${p.hn} · ${p.age}${p.sex}`;
+  const ccEl = document.getElementById('vid-cc');
+  if (ccEl) ccEl.textContent = `"${s.chiefComplaint}"`;
 
   const img = document.getElementById('vid-patient-img');
   if (img) {
@@ -363,39 +365,56 @@ function renderVideo() {
 
   playTranscript(s.transcript);
 
-  document.getElementById('btn-end-call').addEventListener('click', () => {
+  const split = document.getElementById('vid-split');
+  const statusEl = document.getElementById('vid-status');
+  const endBtn = document.getElementById('btn-end-call');
+  endBtn.addEventListener('click', () => {
     stopTranscript();
-    document.querySelector('[data-screen="queue"]').click();
+    if (split) split.classList.add('call-ended');
+    if (statusEl) statusEl.textContent = 'Call ended — complete documentation below, then continue.';
+    endBtn.disabled = true;
+    mount(endBtn, `${ICON('phone-off')} <span>Call ended</span>`);
+    showFeedbackToast(document.getElementById('vid-feedback-mount'),
+      'ok', 'Call ended', 'Documentation panel expanded. Press Save & Continue when ready.');
+    const firstField = document.getElementById('note-pi');
+    if (firstField) firstField.focus();
   });
   document.getElementById('btn-save-cont').addEventListener('click', () => {
     stopTranscript();
-    document.querySelector('[data-screen="assessment"]').click();
+    window.__loadFragment('assessment');
   });
 
-  const noteEl = document.getElementById('note-text');
   const tsEl = document.getElementById('note-ts');
   const saveBtn = document.getElementById('btn-save-note');
-  if (noteEl && tsEl && saveBtn) {
+  const fieldEls = ['pi', 'ph', 'pe', 'pl'].map(k => document.getElementById(`note-${k}`));
+  if (tsEl && saveBtn && fieldEls.every(Boolean)) {
     const hn = s.patient.hn;
-    noteEl.value = getNote(hn);
+    const stored = getNote(hn);
+    fieldEls.forEach(el => { el.value = stored[el.dataset.field] || ''; });
     tsEl.textContent = formatSavedAgo(getNoteSavedAt(hn));
 
     const flush = () => {
-      setNote(hn, noteEl.value);
+      const payload = {};
+      fieldEls.forEach(el => { payload[el.dataset.field] = el.value; });
+      setNote(hn, payload);
       tsEl.classList.remove('unsaved');
       tsEl.textContent = formatSavedAgo(getNoteSavedAt(hn));
     };
 
-    noteEl.addEventListener('input', () => {
-      tsEl.classList.add('unsaved');
-      tsEl.textContent = 'Saving…';
-      clearTimeout(noteSaveTimer);
-      noteSaveTimer = setTimeout(flush, 500);
+    fieldEls.forEach(el => {
+      el.addEventListener('input', () => {
+        tsEl.classList.add('unsaved');
+        tsEl.textContent = 'Saving…';
+        clearTimeout(noteSaveTimer);
+        noteSaveTimer = setTimeout(flush, 500);
+      });
     });
 
     saveBtn.addEventListener('click', () => {
       clearTimeout(noteSaveTimer);
       flush();
+      showFeedbackToast(document.getElementById('vid-feedback-mount'),
+        'ok', 'Draft saved', 'Note saved locally. Continue typing or proceed to Assessment.');
     });
   }
 }
@@ -406,20 +425,20 @@ function renderAssessment() {
   document.getElementById('as-name').textContent = `${s.patient.name} · HN ${s.patient.hn}`;
 
   const d = s.soapDraft;
-  const note = getNote(s.patient.hn);
+  const noteText = getNoteJoined(s.patient.hn);
   const refCard = document.getElementById('as-note-ref');
   const refBody = document.getElementById('as-note-body');
-  if (note && refCard && refBody) {
+  if (noteText && refCard && refBody) {
     refCard.style.display = '';
-    refBody.textContent = note;
+    refBody.textContent = noteText;
   } else if (refCard) {
     refCard.style.display = 'none';
   }
 
   const MARKER = '--- from consult note ---';
   let soapA = d.a;
-  if (note && !soapA.includes(MARKER)) {
-    soapA = `${soapA}\n\n${MARKER}\n${note}`;
+  if (noteText && !soapA.includes(MARKER)) {
+    soapA = `${soapA}\n\n${MARKER}\n${noteText}`;
   }
 
   mount(document.getElementById('as-soap'), `
@@ -503,6 +522,9 @@ function renderAssessment() {
     });
   });
 
+  renderDiagnosis(s);
+  renderManagement(s);
+
   const erBox = document.getElementById('as-er');
   erBox.checked = s.referral.er;
   document.getElementById('as-er-banner').style.display = s.referral.er ? '' : 'none';
@@ -511,17 +533,94 @@ function renderAssessment() {
   });
   document.getElementById('as-dept').value = s.referral.dept || 'None';
 
-  document.getElementById('btn-regen').addEventListener('click', () => alert('[demo] AI regenerating draft...'));
-  document.getElementById('btn-accept').addEventListener('click', () => alert('[demo] SOAP accepted'));
+  const fbMount = document.getElementById('as-feedback-mount');
+  document.getElementById('btn-regen').addEventListener('click', () =>
+    showFeedbackToast(fbMount, 'partial', 'Regenerating', 'AI regenerating SOAP draft (demo).'));
+  document.getElementById('btn-accept').addEventListener('click', () =>
+    showFeedbackToast(fbMount, 'ok', 'SOAP accepted', 'Draft accepted as final.'));
   document.getElementById('btn-draft').addEventListener('click', () => {
-    markDone(s.id);
-    alert('Draft saved');
-    document.querySelector('[data-screen="queue"]').click();
+    showFeedbackToast(fbMount, 'ok', 'Draft saved', 'Saved locally. You can keep editing or continue.');
   });
   document.getElementById('btn-save-sync').addEventListener('click', () => {
     markDone(s.id);
-    document.querySelector('[data-screen="sync"]').click();
+    window.__loadFragment('sync');
   });
+}
+
+const DX_KEY = 'telemed.dx';
+function getDxList(hn) {
+  try { return JSON.parse(localStorage.getItem(DX_KEY) || '{}')[hn] || []; }
+  catch { return []; }
+}
+function setDxList(hn, list) {
+  let store = {};
+  try { store = JSON.parse(localStorage.getItem(DX_KEY) || '{}'); } catch {}
+  store[hn] = list;
+  localStorage.setItem(DX_KEY, JSON.stringify(store));
+}
+
+function renderDiagnosis(s) {
+  const host = document.getElementById('as-dx');
+  const input = document.getElementById('as-dx-input');
+  const addBtn = document.getElementById('btn-add-dx');
+  if (!host || !input || !addBtn) return;
+  const hn = s.patient.hn;
+  const seed = (s.soapDraft && s.soapDraft.a) ? [s.soapDraft.a.split('—')[0].split('.')[0].trim()].filter(Boolean) : [];
+  let list = getDxList(hn);
+  if (!list.length && seed.length) { list = seed; setDxList(hn, list); }
+
+  const paint = () => {
+    if (!list.length) {
+      mount(host, '<div class="muted" style="font-size:var(--fs-sm)">No diagnoses yet — add at least one before prescribing.</div>');
+      return;
+    }
+    mount(host, list.map((dx, i) => `
+      <div class="dx-row" data-idx="${i}">
+        <span class="dx-rank">${i + 1}</span>
+        <span class="dx-text">${dx}</span>
+        <button class="dx-del sm" aria-label="Remove diagnosis">${ICON('x','icon icon-sm')}</button>
+      </div>
+    `).join(''));
+    host.querySelectorAll('.dx-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.closest('.dx-row').dataset.idx);
+        list = list.filter((_, i) => i !== idx);
+        setDxList(hn, list);
+        paint();
+      });
+    });
+  };
+  paint();
+
+  const commit = () => {
+    const v = input.value.trim();
+    if (!v) return;
+    list = [...list, v];
+    setDxList(hn, list);
+    input.value = '';
+    paint();
+  };
+  addBtn.onclick = commit;
+  input.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); commit(); } };
+}
+
+function renderManagement(s) {
+  const text = document.getElementById('as-mgmt-text');
+  const target = document.getElementById('as-mgmt-target');
+  const sendBtn = document.getElementById('btn-mgmt-send');
+  const fbMount = document.getElementById('as-feedback-mount');
+  if (!text || !target || !sendBtn) return;
+  sendBtn.onclick = () => {
+    const msg = text.value.trim();
+    if (!msg) {
+      showFeedbackToast(fbMount, 'fail', 'Empty message', 'Type management instructions before sending.');
+      return;
+    }
+    const labels = { nurse: 'Nurse', pharmacist: 'Pharmacist', both: 'Nurse + Pharmacist' };
+    showFeedbackToast(fbMount, 'ok', `Sent to ${labels[target.value] || target.value}`,
+      `${msg.slice(0, 80)}${msg.length > 80 ? '…' : ''}`);
+    text.value = '';
+  };
 }
 
 function renderSync() {
@@ -664,6 +763,6 @@ function renderSync() {
   step();
 
   document.getElementById('btn-back').addEventListener('click', () => {
-    document.querySelector('[data-screen="queue"]').click();
+    window.__loadFragment('queue');
   });
 }
