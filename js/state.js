@@ -1,7 +1,7 @@
 import { scenarios } from './scenarios.js';
 
 const KEY = 'telemed.state.v4';
-export const SCREEN_STEP = { queue: 1, summary: 2, video: 3, assessment: 4, sync: 5 };
+export const SCREEN_STEP = { queue: 1, summary: 2, video: 3, assessment: 4 };
 const NOTE_FIELDS = ['pi', 'ph', 'pe', 'pl'];
 const blankNote = () => ({ pi: '', ph: '', pe: '', pl: '' });
 

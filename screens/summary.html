@@ -60,4 +60,22 @@
     <summary>Admin Metrics (optional)</summary>
     <p class="muted">Mock admin block.</p>
   </details>
+
+  <div id="raw-data-modal" class="modal-backdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="raw-title">
+      <div class="modal-head">
+        <h3 id="raw-title">
+          <svg class="icon" aria-hidden="true"><use href="#i-database"/></svg>
+          Raw Patient Data — Mock History Block
+        </h3>
+        <button id="btn-raw-close" class="icon-btn ghost" aria-label="Close">
+          <svg class="icon" aria-hidden="true"><use href="#i-x"/></svg>
+        </button>
+      </div>
+      <pre id="raw-data-body" class="raw-data-body"></pre>
+      <div class="modal-foot">
+        <button id="btn-raw-dismiss" class="primary">Close</button>
+      </div>
+    </div>
+  </div>
 </section>

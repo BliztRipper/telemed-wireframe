@@ -66,6 +66,44 @@ function buildIso(hhmm) {
   return d.toISOString();
 }
 
+function wireRawDataModal(s) {
+  const modal = document.getElementById('raw-data-modal');
+  const body = document.getElementById('raw-data-body');
+  const open = document.getElementById('btn-raw');
+  const closeX = document.getElementById('btn-raw-close');
+  const closeBtn = document.getElementById('btn-raw-dismiss');
+  if (!modal || !body || !open) return;
+
+  const payload = {
+    patient: s.patient,
+    scheduledAt: s.scheduledAt,
+    reasonShort: s.reasonShort,
+    chiefComplaint: s.chiefComplaint,
+    allergy: s.allergy,
+    vitals: s.vitals,
+    labs: s.labs,
+    meds: s.meds,
+    redFlags: s.redFlags,
+    referral: s.referral,
+    soapDraft: s.soapDraft,
+    rxPrefilled: s.rxPrefilled,
+    syncOutcome: s.syncOutcome,
+    transcriptLines: (s.transcript || []).length,
+    waitingMin: s.waitingMin
+  };
+  body.textContent = JSON.stringify(payload, null, 2);
+
+  const show = () => { modal.hidden = false; document.body.style.overflow = 'hidden'; };
+  const hide = () => { modal.hidden = true; document.body.style.overflow = ''; };
+  open.onclick = show;
+  if (closeX) closeX.onclick = hide;
+  if (closeBtn) closeBtn.onclick = hide;
+  modal.onclick = (e) => { if (e.target === modal) hide(); };
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.hidden) hide();
+  }, { once: true });
+}
+
 export function showSyncToast(outcome) {
   const mountEl = document.getElementById('sum-toast-mount');
   if (!mountEl || !outcome) return;
@@ -299,6 +337,8 @@ function renderSummary() {
   }
 
   if (s.redFlags.length) showRedFlagToast(s.redFlags);
+
+  wireRawDataModal(s);
 
   const videoBtn = document.getElementById('btn-start-video');
   if (state.role === 'nurse') {
@@ -542,9 +582,43 @@ function renderAssessment() {
     showFeedbackToast(fbMount, 'ok', 'Draft saved', 'Saved locally. You can keep editing or continue.');
   });
   document.getElementById('btn-save-sync').addEventListener('click', () => {
+    const summary = computeSyncSummary(s);
     markDone(s.id);
-    window.__loadFragment('sync');
+    if (summary.outcome === 'ok') {
+      showFeedbackToast(fbMount, 'ok', 'Synced',
+        `${summary.systems.join(' · ')} · ${absTime(new Date().toISOString())}`, 2200);
+    } else if (summary.outcome === 'partial') {
+      showFeedbackToast(fbMount, 'partial', 'Partial Sync',
+        `${summary.failures.length} of ${summary.total} failed (${summary.failures.join(', ')}).`, 3200);
+    } else {
+      showFeedbackToast(fbMount, 'fail', 'Sync Failed', 'All systems failed. Retry from queue.', 3200);
+    }
+    setTimeout(() => {
+      resetWorkflow();
+      window.__loadFragment('queue');
+    }, summary.outcome === 'ok' ? 1800 : 2800);
   });
+}
+
+function computeSyncSummary(s) {
+  const dests = [
+    { key: 'his',      label: 'HIS' },
+    { key: 'pharmacy', label: 'Pharmacy' },
+    { key: 'lab',      label: 'Lab' },
+    { key: 'nhso',     label: 'NHSO' }
+  ];
+  if (s.referral && s.referral.er) dests.push({ key: 'er', label: 'ER' });
+  const norm = (v) => (typeof v === 'string' ? { result: v } : (v || { result: null }));
+  const results = dests.map(d => ({ ...d, ...norm(s.syncOutcome[d.key]) }));
+  const fails = results.filter(r => r.result === 'fail');
+  const oks = results.filter(r => r.result === 'ok');
+  const outcome = fails.length === 0 ? 'ok' : (fails.length < dests.length ? 'partial' : 'fail');
+  return {
+    outcome,
+    total: dests.length,
+    systems: oks.map(r => r.label),
+    failures: fails.map(r => `${r.label}${r.code ? ' ' + r.code : ''}`)
+  };
 }
 
 const DX_KEY = 'telemed.dx';
