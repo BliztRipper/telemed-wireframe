@@ -16,6 +16,7 @@ export async function loadFragment(name) {
 window.__loadFragment = loadFragment;
 
 function refreshNav() {
+  const collapsed = document.querySelector('.app').classList.contains('sidebar-collapsed');
   document.querySelectorAll('.nav-item').forEach(el => {
     const scr = el.dataset.screen;
     const step = SCREEN_STEP[scr] || 1;
@@ -27,7 +28,9 @@ function refreshNav() {
     el.classList.toggle('done', step < state.maxStep && !nurseLocked);
     if (stepLocked) el.setAttribute('aria-disabled', 'true');
     else el.removeAttribute('aria-disabled');
-    el.title = stepLocked ? `Step ${step} unlocks after step ${state.maxStep} is reached.` : '';
+    if (stepLocked) el.title = `Step ${step} unlocks after step ${state.maxStep} is reached.`;
+    else if (collapsed) el.title = el.dataset.label || '';
+    else el.title = '';
   });
   const fc = document.getElementById('flag-count');
   const count = activeScenario().redFlags.length > 0 ? 1 : 0;
@@ -60,6 +63,25 @@ function wireUp() {
   });
   const hamb = document.getElementById('hamburger');
   hamb.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
+
+  const SIDEBAR_KEY = 'telemed.sidebar.collapsed';
+  const appEl = document.querySelector('.app');
+  const collapseBtn = document.getElementById('sidebar-collapse');
+  const applyCollapsed = (collapsed) => {
+    appEl.classList.toggle('sidebar-collapsed', collapsed);
+    collapseBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    collapseBtn.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+    document.querySelectorAll('.nav-item').forEach(el => {
+      if (collapsed) el.setAttribute('title', el.dataset.label || '');
+      else el.removeAttribute('title');
+    });
+  };
+  applyCollapsed(localStorage.getItem(SIDEBAR_KEY) === '1');
+  collapseBtn.addEventListener('click', () => {
+    const next = !appEl.classList.contains('sidebar-collapsed');
+    applyCollapsed(next);
+    localStorage.setItem(SIDEBAR_KEY, next ? '1' : '0');
+  });
 
   const resetBtn = document.getElementById('btn-reset-demo');
   if (resetBtn) {

@@ -8,8 +8,8 @@
     </div>
     <div class="actions">
       <button id="btn-raw">
-        <svg class="icon" aria-hidden="true"><use href="#i-database"/></svg>
-        Raw Data
+        <svg class="icon" aria-hidden="true"><use href="#i-clipboard"/></svg>
+        Patient History
       </button>
       <button id="btn-start-video" class="primary">
         <svg class="icon" aria-hidden="true"><use href="#i-video"/></svg>
@@ -65,14 +65,14 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="raw-title">
       <div class="modal-head">
         <h3 id="raw-title">
-          <svg class="icon" aria-hidden="true"><use href="#i-database"/></svg>
-          Raw Patient Data — Mock History Block
+          <svg class="icon" aria-hidden="true"><use href="#i-clipboard"/></svg>
+          Patient History
         </h3>
         <button id="btn-raw-close" class="icon-btn ghost" aria-label="Close">
           <svg class="icon" aria-hidden="true"><use href="#i-x"/></svg>
         </button>
       </div>
-      <pre id="raw-data-body" class="raw-data-body"></pre>
+      <div id="raw-data-body" class="history-body"></div>
       <div class="modal-foot">
         <button id="btn-raw-dismiss" class="primary">Close</button>
       </div>

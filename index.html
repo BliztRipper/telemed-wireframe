@@ -148,6 +148,12 @@
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
       <circle cx="12" cy="7" r="4"/>
     </symbol>
+    <symbol id="i-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </symbol>
   </defs>
 </svg>
 
@@ -195,26 +201,30 @@
   </header>
 
   <aside id="sidebar" aria-label="Primary navigation">
+    <button id="sidebar-collapse" class="sidebar-toggle" type="button" aria-label="Collapse sidebar" aria-expanded="true" aria-controls="sidebar">
+      <svg class="icon icon-chevron-collapse" aria-hidden="true"><use href="#i-chevron-left"/></svg>
+      <svg class="icon icon-chevron-expand" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+    </button>
     <div class="sidebar-section-label">Workflow</div>
-    <a class="nav-item" data-screen="queue" tabindex="0" role="link">
+    <a class="nav-item" data-screen="queue" tabindex="0" role="link" data-label="Patient Queue">
       <span class="nav-step">1</span>
       <svg class="icon" aria-hidden="true"><use href="#i-clipboard"/></svg>
-      <span>Patient Queue</span>
+      <span class="nav-label">Patient Queue</span>
     </a>
-    <a class="nav-item" data-screen="summary" tabindex="0" role="link">
+    <a class="nav-item" data-screen="summary" tabindex="0" role="link" data-label="Patient Summary">
       <span class="nav-step">2</span>
       <svg class="icon" aria-hidden="true"><use href="#i-heart-pulse"/></svg>
-      <span>Patient Summary</span>
+      <span class="nav-label">Patient Summary</span>
     </a>
-    <a class="nav-item" data-screen="video" tabindex="0" role="link">
+    <a class="nav-item" data-screen="video" tabindex="0" role="link" data-label="Video Consult">
       <span class="nav-step">3</span>
       <svg class="icon" aria-hidden="true"><use href="#i-video"/></svg>
-      <span>Video Consult</span>
+      <span class="nav-label">Video Consult</span>
     </a>
-    <a class="nav-item" data-screen="assessment" tabindex="0" role="link">
+    <a class="nav-item" data-screen="assessment" tabindex="0" role="link" data-label="Assess & Plan">
       <span class="nav-step">4</span>
       <svg class="icon" aria-hidden="true"><use href="#i-file-edit"/></svg>
-      <span>Assess &amp; Plan</span>
+      <span class="nav-label">Assess &amp; Plan</span>
     </a>
 
     <div class="scenario-picker">

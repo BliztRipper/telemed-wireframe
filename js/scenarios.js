@@ -39,7 +39,39 @@ export const scenarios = {
     ],
     referral: { er: false, dept: 'None' },
     labPending: false,
-    syncOutcome: { his: 'ok', pharmacy: 'ok', lab: 'ok', nhso: 'ok', er: null }
+    syncOutcome: { his: 'ok', pharmacy: 'ok', lab: 'ok', nhso: 'ok', er: null },
+    history: {
+      conditions: [
+        { name: 'Type 2 Diabetes Mellitus', since: '2018-03', status: 'controlled on metformin' },
+        { name: 'Dyslipidemia', since: '2019-07', status: 'LDL at goal' },
+        { name: 'Mild knee osteoarthritis', since: '2022-05', status: 'PRN paracetamol' }
+      ],
+      surgeries: [
+        { name: 'Appendectomy', date: '1995-06', note: 'open, uneventful recovery' }
+      ],
+      medications: [
+        { name: 'Metformin 500mg BID', start: '2020-08', stop: null, reason: 'first-line T2DM' },
+        { name: 'Atorvastatin 20mg OD', start: '2019-07', stop: null, reason: 'dyslipidemia' },
+        { name: 'Glibenclamide 5mg OD', start: '2018-03', stop: '2020-08', reason: 'switched — hypoglycemic episodes' }
+      ],
+      symptoms: [
+        { date: '2026-04-15', note: 'Mild afternoon fatigue, self-resolved' },
+        { date: '2026-01-08', note: 'Transient polyuria during URI, resolved with hydration' },
+        { date: '2025-09-22', note: 'No symptoms — routine review' }
+      ],
+      visits: [
+        { date: '2026-01-22', dept: 'OPD-Endocrine', note: 'HbA1c 7.0%, dose unchanged' },
+        { date: '2025-10-20', dept: 'OPD-Endocrine', note: 'Foot exam clean, retinal screen normal' },
+        { date: '2025-07-18', dept: 'OPD-Endocrine', note: 'HbA1c 7.2%, reinforced diet' }
+      ],
+      family: 'Father — T2DM (dx age 55). Mother — HTN.',
+      social: 'Retired teacher. Non-smoker. Social alcohol (1–2 drinks/wk). Walks 30 min daily.',
+      immunizations: [
+        { name: 'Influenza', date: '2025-10' },
+        { name: 'COVID-19 booster', date: '2025-04' },
+        { name: 'Pneumococcal (PPSV23)', date: '2024-03' }
+      ]
+    }
   },
   B: {
     id: 'B',
@@ -87,7 +119,45 @@ export const scenarios = {
     ],
     referral: { er: true, dept: 'Cardiology' },
     labPending: false,
-    syncOutcome: { his: 'ok', pharmacy: 'ok', lab: 'ok', nhso: 'ok', er: 'ok' }
+    syncOutcome: { his: 'ok', pharmacy: 'ok', lab: 'ok', nhso: 'ok', er: 'ok' },
+    history: {
+      conditions: [
+        { name: 'Congestive Heart Failure (HFrEF, EF 35%)', since: '2021-02', status: 'on diuretic + ACEi' },
+        { name: 'Prior anterior STEMI', since: '2019-08', status: 's/p PCI to LAD with DES' },
+        { name: 'Hypertension', since: '2010-04', status: 'controlled' },
+        { name: 'Paroxysmal atrial fibrillation', since: '2022-11', status: 'rate-controlled' },
+        { name: 'CKD stage 2', since: '2023-06', status: 'eGFR 68' }
+      ],
+      surgeries: [
+        { name: 'PCI + DES to LAD', date: '2019-08', note: 'post-STEMI, no complications' },
+        { name: 'Cataract extraction OD', date: '2023-04', note: 'phacoemulsification, uneventful' }
+      ],
+      medications: [
+        { name: 'Furosemide 40mg BID', start: '2021-02', stop: null, reason: 'HFrEF — volume control' },
+        { name: 'Enalapril 10mg BID', start: '2022-01', stop: null, reason: 'replaced atenolol — better LV remodeling' },
+        { name: 'Aspirin 81mg OD', start: '2019-08', stop: null, reason: 'post-PCI secondary prevention' },
+        { name: 'Atenolol 50mg OD', start: '2019-09', stop: '2022-01', reason: 'switched to ACEi for HFrEF' },
+        { name: 'Clopidogrel 75mg OD', start: '2019-08', stop: '2020-08', reason: 'completed 12-mo DAPT' }
+      ],
+      symptoms: [
+        { date: '2026-04-28', note: 'TODAY — 2h chest tightness, worse on exertion, L-arm heaviness' },
+        { date: '2026-04-25', note: 'Bilateral leg edema +1, mild orthopnea (1 extra pillow)' },
+        { date: '2026-04-20', note: 'Dyspnea on stair climbing, NYHA II' },
+        { date: '2026-03-12', note: 'Stable, no chest pain' }
+      ],
+      visits: [
+        { date: '2026-03-12', dept: 'OPD-Cardiology', note: 'Echo EF 35% (stable). Up-titrated furosemide.' },
+        { date: '2025-12-04', dept: 'OPD-Cardiology', note: 'Holter 24h — rare PACs, no sustained AF' },
+        { date: '2025-09-08', dept: 'OPD-Cardiology', note: 'BNP 320, mild congestion. Diet review.' }
+      ],
+      family: 'Father — fatal MI age 60. Brother — CABG age 58.',
+      social: 'Retired civil servant. Ex-smoker (quit 2019, 30 pack-years). No alcohol. Sedentary since CHF dx.',
+      immunizations: [
+        { name: 'Influenza', date: '2025-10' },
+        { name: 'COVID-19 booster', date: '2025-04' },
+        { name: 'Pneumococcal (PCV13 + PPSV23)', date: '2023-09' }
+      ]
+    }
   },
   C: {
     id: 'C',
@@ -121,7 +191,32 @@ export const scenarios = {
     ],
     referral: { er: false, dept: 'None' },
     labPending: true,
-    syncOutcome: { his: 'ok', pharmacy: { result: 'fail', code: 'ERR-503', reason: 'pharmacy offline' }, lab: 'ok', nhso: 'ok', er: null }
+    syncOutcome: { his: 'ok', pharmacy: { result: 'fail', code: 'ERR-503', reason: 'pharmacy offline' }, lab: 'ok', nhso: 'ok', er: null },
+    history: {
+      conditions: [
+        { name: 'Essential Hypertension', since: '2022-06', status: 'controlled on amlodipine' },
+        { name: 'Overweight (BMI 27.4)', since: '2022-06', status: 'lifestyle counselling' }
+      ],
+      surgeries: [],
+      medications: [
+        { name: 'Amlodipine 5mg OD', start: '2024-02', stop: null, reason: 'switched from HCTZ' },
+        { name: 'Hydrochlorothiazide 25mg OD', start: '2022-06', stop: '2024-02', reason: 'discontinued — leg cramps' }
+      ],
+      symptoms: [
+        { date: '2026-04-15', note: 'Asymptomatic — home BP ~130/80' },
+        { date: '2026-01-12', note: 'Occasional headaches, resolved with hydration' }
+      ],
+      visits: [
+        { date: '2026-01-22', dept: 'OPD-Internal Medicine', note: 'BP 132/82, labs stable' },
+        { date: '2025-10-14', dept: 'OPD-Internal Medicine', note: 'Annual review — no end-organ damage' }
+      ],
+      family: 'Both parents — HTN. No early CV deaths.',
+      social: 'Accountant. Non-smoker. Occasional alcohol (1 drink/wk). Sedentary, weekend cycling.',
+      immunizations: [
+        { name: 'Influenza', date: '2025-11' },
+        { name: 'COVID-19 booster', date: '2024-10' }
+      ]
+    }
   },
   D: {
     id: 'D',

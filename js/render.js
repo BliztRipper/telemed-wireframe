@@ -66,7 +66,53 @@ function buildIso(hhmm) {
   return d.toISOString();
 }
 
-function wireRawDataModal(s) {
+function histRow(date, label, meta) {
+  return `<div class="hist-row">
+    <span class="hist-date">${date || '—'}</span>
+    <div class="hist-content">
+      <div class="hist-label">${label}</div>
+      ${meta ? `<div class="hist-meta">${meta}</div>` : ''}
+    </div>
+  </div>`;
+}
+function histSection(title, iconId, rows, emptyMsg) {
+  return `<section class="hist-section">
+    <h4>${ICON(iconId)} ${title}</h4>
+    ${rows.length ? `<div class="hist-list">${rows.join('')}</div>` : `<div class="hist-empty">${emptyMsg || 'No records'}</div>`}
+  </section>`;
+}
+function buildHistoryHTML(s) {
+  const h = s.history || {};
+  const medRange = m => `${m.start || '—'} → ${m.stop || 'present'}`;
+  const medMeta = m => `${m.stop ? 'Discontinued' : 'Active'}${m.reason ? ` · ${m.reason}` : ''}`;
+
+  return [
+    histSection('Past Medical Conditions', 'heart-pulse',
+      (h.conditions || []).map(c => histRow(`since ${c.since}`, c.name, c.status))),
+    histSection('Surgical History', 'edit',
+      (h.surgeries || []).map(c => histRow(c.date, c.name, c.note)),
+      'No prior surgeries'),
+    histSection('Medication Timeline', 'pill',
+      (h.medications || []).map(m => histRow(medRange(m), m.name, medMeta(m)))),
+    histSection('Symptom Timeline', 'alert-triangle',
+      (h.symptoms || []).map(x => histRow(x.date, x.note, ''))),
+    histSection('Recent Visits', 'clipboard',
+      (h.visits || []).map(v => histRow(v.date, v.dept, v.note))),
+    `<section class="hist-section">
+      <h4>${ICON('user')} Family &amp; Social</h4>
+      ${(h.family || h.social)
+        ? `<div class="hist-list">
+            ${h.family ? `<div class="hist-line"><strong>Family:</strong> ${h.family}</div>` : ''}
+            ${h.social ? `<div class="hist-line"><strong>Social:</strong> ${h.social}</div>` : ''}
+          </div>`
+        : '<div class="hist-empty">No data recorded</div>'}
+    </section>`,
+    histSection('Immunizations', 'shield',
+      (h.immunizations || []).map(im => histRow(im.date, im.name, '')))
+  ].join('');
+}
+
+function wirePatientHistoryModal(s) {
   const modal = document.getElementById('raw-data-modal');
   const body = document.getElementById('raw-data-body');
   const open = document.getElementById('btn-raw');
@@ -74,24 +120,7 @@ function wireRawDataModal(s) {
   const closeBtn = document.getElementById('btn-raw-dismiss');
   if (!modal || !body || !open) return;
 
-  const payload = {
-    patient: s.patient,
-    scheduledAt: s.scheduledAt,
-    reasonShort: s.reasonShort,
-    chiefComplaint: s.chiefComplaint,
-    allergy: s.allergy,
-    vitals: s.vitals,
-    labs: s.labs,
-    meds: s.meds,
-    redFlags: s.redFlags,
-    referral: s.referral,
-    soapDraft: s.soapDraft,
-    rxPrefilled: s.rxPrefilled,
-    syncOutcome: s.syncOutcome,
-    transcriptLines: (s.transcript || []).length,
-    waitingMin: s.waitingMin
-  };
-  body.textContent = JSON.stringify(payload, null, 2);
+  mount(body, buildHistoryHTML(s));
 
   const show = () => { modal.hidden = false; document.body.style.overflow = 'hidden'; };
   const hide = () => { modal.hidden = true; document.body.style.overflow = ''; };
@@ -338,7 +367,7 @@ function renderSummary() {
 
   if (s.redFlags.length) showRedFlagToast(s.redFlags);
 
-  wireRawDataModal(s);
+  wirePatientHistoryModal(s);
 
   const videoBtn = document.getElementById('btn-start-video');
   if (state.role === 'nurse') {
@@ -395,13 +424,13 @@ function renderVideo() {
     ? abnormal.map(l => `<span class="chip flag">${ICON(l.arrow === '↑' ? 'trend-up' : 'trend-down', 'icon icon-sm')} ${l.name} ${l.values.at(-1)}</span>`).join('')
     : '<span class="muted" style="font-size:var(--fs-sm)">None</span>');
 
-  mount(document.getElementById('vid-meds'), `
-    <div class="row wrap" style="gap:6px;margin-bottom:6px">${s.meds.map(m => `<span class="chip">${ICON('pill','icon icon-sm')} ${m.name} ${m.dose}</span>`).join('')}</div>
-    <div class="row wrap" style="gap:6px">
-      <span class="muted" style="font-size:var(--fs-sm)">Allergy:</span>
-      ${s.allergy.length ? s.allergy.map(a => `<span class="chip flag">${ICON('ban','icon icon-sm')} ${a.drug}</span>`).join('') : '<span class="muted" style="font-size:var(--fs-sm)">none</span>'}
-    </div>
-  `);
+  mount(document.getElementById('vid-meds'), s.meds.length
+    ? `<div class="row wrap" style="gap:6px">${s.meds.map(m => `<span class="chip">${ICON('pill','icon icon-sm')} ${m.name} ${m.dose}${m.freq ? ` · ${m.freq}` : ''}</span>`).join('')}</div>`
+    : '<div class="muted" style="font-size:var(--fs-sm)">No current meds</div>');
+
+  mount(document.getElementById('vid-allergy'), s.allergy.length
+    ? `<div class="row wrap" style="gap:6px">${s.allergy.map(a => `<span class="chip flag">${ICON('ban','icon icon-sm')} ${a.drug}${a.reaction ? ` <span class="muted" style="font-size:var(--fs-xs)">(${a.reaction})</span>` : ''}</span>`).join('')}</div>`
+    : '<div class="allergy-empty">No known allergies</div>');
 
   playTranscript(s.transcript);
 
